@@ -1,0 +1,20 @@
+.mood-icon {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mood-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.mood-icon.selected {
+  border: 3px solid #0d6efd; /* Bootstrap blue */
+  box-shadow: 0 0 12px rgba(13, 110, 253, 0.6);
+}
+#moodOptions div {
+  min-width: 80px;
+}
