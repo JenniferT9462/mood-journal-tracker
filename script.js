@@ -55,7 +55,13 @@ saveEntry.addEventListener("click", function (e) {
     return;
   }
 
-  const today = new Date().toISOString().split("T")[0]; //YYYY-MM-DD
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed, so add 1
+  const day = String(now.getDate()).padStart(2, "0");
+
+  const today = `${year}-${month}-${day}`;
   // Formatting the saved entry object data
   const entry = { date: today, mood: selectedMood, journalText };
 
@@ -100,33 +106,27 @@ function renderCalendar() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
 
-
-   // Calendar grid
+  // Calendar grid
   const grid = document.createElement("div");
   grid.className = "calendar-grid";
 
-  
   //Add weekdays
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-//   const headerRow = document.createElement("div");
-//   headerRow.className = "d-flex flex-wrap";
-  weekdays.forEach(day => {
+
+  weekdays.forEach((day) => {
     const h = document.createElement("div");
     h.className = "calendar-header";
     h.textContent = day;
     grid.appendChild(h);
-  })
-//   calendar.appendChild(headerRow);
+  });
+  //   calendar.appendChild(headerRow);
 
-  
-
-   // Empty slots before the 1st of the month
+  // Empty slots before the 1st of the month
   for (let i = 0; i < firstDay; i++) {
     const empty = document.createElement("div");
     empty.className = "calendar-day empty";
     grid.appendChild(empty);
   }
-
 
   //Fill in days
   for (let day = 1; day <= daysInMonth; day++) {
@@ -138,23 +138,12 @@ function renderCalendar() {
     const dayBox = document.createElement("div");
     dayBox.className = "calendar-day";
 
-     // optional day number top-left (keeps visual clarity)
+    // optional day number top-left (keeps visual clarity)
     const num = document.createElement("div");
     num.className = "day-number";
     num.textContent = day;
     dayBox.appendChild(num);
-    
 
-    // if (entry) {
-    //     const img = document.createElement("img");
-    //     img.src = moodEmojis[entry.mood];
-    //     img.alt = "Mood";
-    //     img.style.width = "32px";
-    //     img.style.height = "32px";
-    //     dayBox.appendChild(img);
-    // } else {
-    //   dayBox.textContent = day;
-    // }
     if (entry && entry.mood && moodEmojis[entry.mood]) {
       const img = document.createElement("img");
       img.src = moodEmojis[entry.mood];
