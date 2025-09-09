@@ -4,6 +4,7 @@
   cursor: pointer;
   border-radius: 50%;
   transition: transform 0.2s, box-shadow 0.2s;
+  user-select: none;
 }
 
 .mood-icon:hover {
@@ -12,9 +13,69 @@
 }
 
 .mood-icon.selected {
-  border: 3px solid #0d6efd; /* Bootstrap blue */
-  box-shadow: 0 0 12px rgba(13, 110, 253, 0.6);
+  border: 3px solid #8618ab; /* Bootstrap blue */
+  box-shadow: 0 0 12px rgba(151, 40, 168, 0.6);
 }
 #moodOptions div {
   min-width: 80px;
+}
+
+.calendar-header,
+.calendar-day {
+  width: calc(100% / 7); 
+  flex: 0 0 calc(100% / 7);  /* 7 days per week */
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 6px;
+  min-height: 60px; /* keeps consistent box height */
+  box-sizing: border-box;
+  color: purple;
+  border-radius: 8px;         /* rounded corners */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle shadow */
+             /* space between boxes */
+  background: #fff;           /* white background */
+  transition: transform 0.2s; /* for hover effect */
+}
+
+.calendar-grid,
+.calendar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px; /* spacing between boxes */
+}
+
+
+.calendar-header {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+.calendar-day:hover {
+  transform: scale(1.05);     /* slight zoom on hover */
+  cursor: pointer;
+}
+
+.calendar-day.empty {
+  background: #fdfdfd;
+}
+
+.mood-icon {
+  width: 32px;
+  height: 32px;
+  display: block;
+  margin: auto;
+}
+
+/* Make calendar shrink gracefully on mobile */
+@media (max-width: 768px) {
+  .calendar-header,
+  .calendar-day {
+    min-height: 50px;
+    padding: 4px;
+    font-size: 0.8rem;
+  }
+
+  .mood-icon {
+    width: 24px;
+    height: 24px;
+  }
 }
