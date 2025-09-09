@@ -1,3 +1,17 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f3f4f6;
+}
+
+/* Added to ensure headers are the correct color */
+h1 {
+  color: #6b21a8;
+}
+
+h2 {
+  color: #7e22ce;
+}
+
 .mood-icon {
   width: 60px;
   height: 60px;
@@ -9,18 +23,19 @@
 
 .mood-icon:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .mood-icon.selected {
-  border: 3px solid #8618ab; /* Bootstrap blue */
+  border: 3px solid #8618ab;
   box-shadow: 0 0 12px rgba(151, 40, 168, 0.6);
 }
 #moodOptions div {
   min-width: 80px;
 }
 
-/* grid container: headers + days use the same columns */
+/* Calendar Grid */
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr); /* 7 equal columns */
@@ -43,13 +58,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.12s ease;
 }
-
+.calendar-day:hover {
+  transform: translateY(-3px);
+}
 /* weekday header (first row) */
 .calendar-header {
   font-weight: 600;
   background: #f8f9fa;
   color: #9811b3;
+  cursor: default;
 }
 
 /* day number top-left inside day box (optional) */
@@ -61,18 +82,12 @@
   color: #b655df;
 }
 
-/* day hover */
-.calendar-day:hover {
-  transform: translateY(-3px);
-  transition: transform 0.12s ease;
-  cursor: pointer;
-}
-
 /* empty placeholder */
 .calendar-day.empty {
   background: #fbfbfd;
   box-shadow: none;
   border-style: dashed;
+  cursor: default;
 }
 
 /* small images inside day boxes */
@@ -84,19 +99,45 @@
   margin: 0 auto;
 }
 
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+/* This rule was added to fix the bug */
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* smaller modal */
+  width: 90%;
+  max-width: 400px;
+}
+
 /* responsive tweak */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .calendar-header,
   .calendar-day {
     min-height: 48px;
     padding: 6px;
     font-size: 0.85rem;
   }
-  .calendar-mood-icon { width: 32px; height: 32px; }
-}
-
-
-
-
-
-
+  .calendar-mood-icon {
+    width: 32px;
+    height: 32px;
+  }
+} */

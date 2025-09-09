@@ -11,12 +11,31 @@ const daysTracked = document.getElementById("days-tracked");
 const streak = document.getElementById("streak");
 const avgMood = document.getElementById("avg-mood");
 const entryDateInput = document.getElementById("entry-date");
+const currentMonthYearEl = document.getElementById("current-month-year");
+const prevMonthBtn = document.getElementById("prev-month");
+const nextMonthBtn = document.getElementById("next-month");
+
+// Modal elements
+const messageModal = document.getElementById("message-modal");
+const modalText = document.getElementById("modal-text");
+const modalCloseBtn = document.getElementById("modal-close");
 
 // Start selected mood at null
 let selectedMood = null;
+// To keep track of the month displayed on the calendar
+let currentDate = new Date();
 
-// Save icon btns
-const moodInputs = document.querySelectorAll(".mood-icon");
+// Helper function to show modal messages
+function showModal(message) {
+  modalText.textContent = message;
+  messageModal.classList.remove("hidden");
+}
+// Close modal on button click
+modalCloseBtn.addEventListener("click", () => {
+  messageModal.classList.add("hidden");
+});
+
+// const moodInputs = document.querySelectorAll(".mood-icon");
 
 moodOptions.addEventListener("click", (e) => {
   console.log("Mood Icon Clicked!");
@@ -34,11 +53,11 @@ moodOptions.addEventListener("click", (e) => {
 });
 
 // Event handler for the save entry button
-const saveEntry = document.getElementById("save-entry");
-saveEntry.addEventListener("click", function (e) {
+const saveEntryBtn = document.getElementById("save-entry");
+saveEntryBtn.addEventListener("click", function (e) {
   console.log("Save Btn Clicked!");
   // Prevent any accidental form submission (if inside form)
-  if (e && e.preventDefault) e.preventDefault();
+  e.preventDefault();
 
   const journalText = journalEntry.value;
   const selectedDate = entryDateInput.value;
@@ -48,22 +67,17 @@ saveEntry.addEventListener("click", function (e) {
 
   // validations
   if (!selectedMood) {
-    alert("Please select a mood before saving.");
+    // alert("Please select a mood before saving.");
+    showModal("Please select a mood before saving.");
     return;
   }
 
   if (!journalText) {
-    alert("Please write a journal entry before saving.");
+    // alert("Please write a journal entry before saving.");
+    showModal("Please write a journal entry before saving.");
     return;
   }
 
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed, so add 1
-  const day = String(now.getDate()).padStart(2, "0");
-
-  // const today = `${year}-${month}-${day}`;
   // Formatting the saved entry object data
   const entry = { date: selectedDate, mood: selectedMood, journalText };
 
@@ -85,7 +99,8 @@ saveEntry.addEventListener("click", function (e) {
 
   // Render Calendar
   renderCalendar();
-  alert("Entry Saved!");
+  // alert("Entry Saved!");
+  showModal("Entry Saved!");
 });
 
 // Render the calendar for the current month
@@ -100,10 +115,12 @@ const moodEmojis = {
 
 function renderCalendar() {
   calendar.innerHTML = "";
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  currentMonthYearEl.textContent = `${currentDate.toLocaleString("default", {
+    month: "long",
+  })} ${currentDate.getFullYear()}`;
+  // const today = new Date();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
@@ -121,7 +138,6 @@ function renderCalendar() {
     h.textContent = day;
     grid.appendChild(h);
   });
-  //   calendar.appendChild(headerRow);
 
   // Empty slots before the 1st of the month
   for (let i = 0; i < firstDay; i++) {
@@ -139,8 +155,9 @@ function renderCalendar() {
 
     const dayBox = document.createElement("div");
     dayBox.className = "calendar-day";
+    dayBox.setAttribute("data-date", dateStr);
 
-    // optional day number top-left (keeps visual clarity)
+    // Add day number
     const num = document.createElement("div");
     num.className = "day-number";
     num.textContent = day;
@@ -149,7 +166,7 @@ function renderCalendar() {
     if (entry && entry.mood && moodEmojis[entry.mood]) {
       const img = document.createElement("img");
       img.src = moodEmojis[entry.mood];
-      img.alt = "Mood";
+      img.alt = entry.mood;
       img.className = "calendar-mood-icon"; // small dedicated class
       dayBox.appendChild(img);
     }
@@ -157,4 +174,62 @@ function renderCalendar() {
   }
   calendar.appendChild(grid);
 }
-renderCalendar();
+
+// Function to populate the form from a clicked day
+calendar.addEventListener("click", (e) => {
+  const dayBox = e.target.closest(".calendar-day");
+  if (dayBox && !dayBox.classList.contains("empty")) {
+    const selectedDateStr = dayBox.getAttribute("data-date");
+    entryDateInput.value = selectedDateStr;
+
+    const entry = entries.find((e) => e.date === selectedDateStr);
+
+    // Clear existing selection
+    document
+      .querySelectorAll(".mood-icon")
+      .forEach((icon) => icon.classList.remove("selected"));
+
+    if (entry) {
+      journalEntry.value = entry.journalText;
+      selectedMood = entry.mood;
+      const moodIcon = document.querySelector(
+        `.mood-icon[data-mood="${entry.mood}"]`
+      );
+      if (moodIcon) {
+        moodIcon.classList.add("selected");
+      }
+    } else {
+      // If no entry, clear the form
+      journalEntry.value = "";
+      selectedMood = null;
+    }
+  }
+});
+
+// Set up calendar navigation
+prevMonthBtn.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+});
+
+nextMonthBtn.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+});
+
+// Initialize app
+function initApp() {
+  // Ensure the modal is hidden on page load
+  messageModal.classList.add("hidden");
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const todayStr = `${year}-${month}-${day}`;
+  entryDateInput.value = todayStr;
+  renderCalendar();
+}
+
+initApp();
+// renderCalendar();
