@@ -40,8 +40,6 @@ modalCloseBtn.addEventListener("click", () => {
   messageModal.classList.add("hidden");
 });
 
-// const moodInputs = document.querySelectorAll(".mood-icon");
-
 moodOptions.addEventListener("click", (e) => {
   console.log("Mood Icon Clicked!");
   const icon = e.target.closest(".mood-icon");
@@ -93,8 +91,6 @@ saveEntryBtn.addEventListener("click", function (e) {
   // Save to local storage
   localStorage.setItem("entries", JSON.stringify(entries));
 
-  // Update Stats
-
   // Clear journal text area
   journalEntry.value = "";
   selectedMood = null;
@@ -123,7 +119,7 @@ function renderCalendar() {
   currentMonthYearEl.textContent = `${currentDate.toLocaleString("default", {
     month: "long",
   })} ${currentDate.getFullYear()}`;
-  // const today = new Date();
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -252,25 +248,45 @@ function updateStats() {
   daysTrackingEl.textContent = entries.length;
 
   // Calculate current streak
-  const sortedDates = entries.map((entry) => entry.date).sort();
+  const sortedDates = entries
+    .map((entry) => new Date(entry.date))
+    .sort((a, b) => a - b);
+
   let streak = 0;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  for (let i = sortedDates.length - 1; i >= 0; i--) {
-    const entryDate = new Date(sortedDates[i]);
-    const dayDiff = Math.floor((today - entryDate) / (1000 * 60 * 60 * 24));
+  // Filter out any entries that are in the future
+  const relevantDates = sortedDates.filter((date) => date <= today);
 
-    if (dayDiff === 0) {
-      streak++;
-      today.setDate(today.getDate() - 1);
-    } else if (dayDiff === 1) {
-      streak++;
-      today.setDate(today.getDate() - 1);
-    } else {
-      break;
+  if (relevantDates.length > 0) {
+    // Check if the most recent relevant date is today or yesterday
+    const lastEntryDate = relevantDates[relevantDates.length - 1];
+    const dayDifferenceFromToday = Math.round(
+      (today.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (dayDifferenceFromToday <= 1) {
+      streak = 1; // Start streak with the last valid entry
+
+      // Iterate backward from the second to last entry
+      for (let i = relevantDates.length - 2; i >= 0; i--) {
+        const currentDate = relevantDates[i];
+        const previousDate = relevantDates[i + 1];
+        const dayDiff = Math.round(
+          (previousDate.getTime() - currentDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+
+        if (dayDiff === 1) {
+          streak++;
+        } else {
+          break; // Streak is broken
+        }
+      }
     }
   }
+
   currentStreakEl.textContent = streak;
 }
 
@@ -290,4 +306,3 @@ function initApp() {
 }
 
 initApp();
-// renderCalendar();
