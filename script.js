@@ -104,17 +104,19 @@ function renderCalendar() {
    // Calendar grid
   const grid = document.createElement("div");
   grid.className = "calendar-grid";
+
+  
   //Add weekdays
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const headerRow = document.createElement("div");
-  headerRow.className = "d-flex flex-wrap";
+//   const headerRow = document.createElement("div");
+//   headerRow.className = "d-flex flex-wrap";
   weekdays.forEach(day => {
     const h = document.createElement("div");
     h.className = "calendar-header";
     h.textContent = day;
-    headerRow.appendChild(h);
+    grid.appendChild(h);
   })
-  calendar.appendChild(headerRow);
+//   calendar.appendChild(headerRow);
 
   
 
@@ -135,17 +137,30 @@ function renderCalendar() {
 
     const dayBox = document.createElement("div");
     dayBox.className = "calendar-day";
+
+     // optional day number top-left (keeps visual clarity)
+    const num = document.createElement("div");
+    num.className = "day-number";
+    num.textContent = day;
+    dayBox.appendChild(num);
     
 
-    if (entry) {
-        const img = document.createElement("img");
-        img.src = moodEmojis[entry.mood];
-        img.alt = "Mood";
-        img.style.width = "32px";
-        img.style.height = "32px";
-        dayBox.appendChild(img);
-    } else {
-      dayBox.textContent = day;
+    // if (entry) {
+    //     const img = document.createElement("img");
+    //     img.src = moodEmojis[entry.mood];
+    //     img.alt = "Mood";
+    //     img.style.width = "32px";
+    //     img.style.height = "32px";
+    //     dayBox.appendChild(img);
+    // } else {
+    //   dayBox.textContent = day;
+    // }
+    if (entry && entry.mood && moodEmojis[entry.mood]) {
+      const img = document.createElement("img");
+      img.src = moodEmojis[entry.mood];
+      img.alt = "Mood";
+      img.className = "calendar-mood-icon"; // small dedicated class
+      dayBox.appendChild(img);
     }
     grid.appendChild(dayBox);
   }
