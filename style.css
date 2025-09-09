@@ -20,62 +20,83 @@
   min-width: 80px;
 }
 
+/* grid container: headers + days use the same columns */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 equal columns */
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* shared styles for headers & day boxes */
 .calendar-header,
 .calendar-day {
-  width: calc(100% / 7); 
-  flex: 0 0 calc(100% / 7);  /* 7 days per week */
-  border: 1px solid #ddd;
-  text-align: center;
-  padding: 6px;
-  min-height: 60px; /* keeps consistent box height */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(86, 7, 86, 0.1);
+  border: 1px solid #e6e6e6;
+  padding: 8px;
+  min-height: 64px;
   box-sizing: border-box;
-  color: purple;
-  border-radius: 8px;         /* rounded corners */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle shadow */
-             /* space between boxes */
-  background: #fff;           /* white background */
-  transition: transform 0.2s; /* for hover effect */
-}
-
-.calendar-grid,
-.calendar-row {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px; /* spacing between boxes */
+  align-items: center;
+  justify-content: center;
 }
 
-
+/* weekday header (first row) */
 .calendar-header {
-  font-weight: bold;
-  background-color: #f8f9fa;
+  font-weight: 600;
+  background: #f8f9fa;
+  color: #9811b3;
 }
+
+/* day number top-left inside day box (optional) */
+.day-number {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 0.85rem;
+  color: #b655df;
+}
+
+/* day hover */
 .calendar-day:hover {
-  transform: scale(1.05);     /* slight zoom on hover */
+  transform: translateY(-3px);
+  transition: transform 0.12s ease;
   cursor: pointer;
 }
 
+/* empty placeholder */
 .calendar-day.empty {
-  background: #fdfdfd;
+  background: #fbfbfd;
+  box-shadow: none;
+  border-style: dashed;
 }
 
-.mood-icon {
-  width: 32px;
-  height: 32px;
+/* small images inside day boxes */
+.calendar-mood-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
   display: block;
-  margin: auto;
+  margin: 0 auto;
 }
 
-/* Make calendar shrink gracefully on mobile */
+/* responsive tweak */
 @media (max-width: 768px) {
   .calendar-header,
   .calendar-day {
-    min-height: 50px;
-    padding: 4px;
-    font-size: 0.8rem;
+    min-height: 48px;
+    padding: 6px;
+    font-size: 0.85rem;
   }
-
-  .mood-icon {
-    width: 24px;
-    height: 24px;
-  }
+  .calendar-mood-icon { width: 32px; height: 32px; }
 }
+
+
+
+
+
+
