@@ -10,6 +10,7 @@ const calendar = document.getElementById("calendar");
 const daysTracked = document.getElementById("days-tracked");
 const streak = document.getElementById("streak");
 const avgMood = document.getElementById("avg-mood");
+const entryDateInput = document.getElementById("entry-date");
 
 // Start selected mood at null
 let selectedMood = null;
@@ -40,6 +41,7 @@ saveEntry.addEventListener("click", function (e) {
   if (e && e.preventDefault) e.preventDefault();
 
   const journalText = journalEntry.value;
+  const selectedDate = entryDateInput.value;
 
   // Debug info — check these in browser console
   console.log({ selectedMood, journalTextLength: journalText.length });
@@ -61,12 +63,12 @@ saveEntry.addEventListener("click", function (e) {
   const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed, so add 1
   const day = String(now.getDate()).padStart(2, "0");
 
-  const today = `${year}-${month}-${day}`;
+  // const today = `${year}-${month}-${day}`;
   // Formatting the saved entry object data
-  const entry = { date: today, mood: selectedMood, journalText };
+  const entry = { date: selectedDate, mood: selectedMood, journalText };
 
   // Prevent duplicate entries by checking the date
-  entries = entries.filter((e) => e.date !== today);
+  entries = entries.filter((e) => e.date !== selectedDate);
   entries.push(entry);
 
   // Save to local storage
