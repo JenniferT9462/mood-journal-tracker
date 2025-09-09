@@ -15,6 +15,11 @@ const currentMonthYearEl = document.getElementById("current-month-year");
 const prevMonthBtn = document.getElementById("prev-month");
 const nextMonthBtn = document.getElementById("next-month");
 
+// Stats elements
+const averageMoodEl = document.getElementById("average-mood");
+const daysTrackingEl = document.getElementById("days-tracking");
+const currentStreakEl = document.getElementById("current-streak");
+
 // Modal elements
 const messageModal = document.getElementById("message-modal");
 const modalText = document.getElementById("modal-text");
@@ -217,6 +222,58 @@ nextMonthBtn.addEventListener("click", () => {
   renderCalendar();
 });
 
+// Function to calculate and update stats
+function updateStats() {
+  if (entries.length === 0) {
+    averageMoodEl.textContent = "--";
+    daysTrackingEl.textContent = "0";
+    currentStreakEl.textContent = "0";
+    return;
+  }
+
+  const moodValues = {
+    happy: 5,
+    excited: 5,
+    calm: 4,
+    anxious: 2,
+    sad: 1,
+    angry: 1,
+  };
+
+  // Calculate average mood
+  const totalMoodValue = entries.reduce(
+    (sum, entry) => sum + moodValues[entry.mood],
+    0
+  );
+  const averageMood = totalMoodValue / entries.length;
+  averageMoodEl.textContent = averageMood.toFixed(1);
+
+  // Calculate days tracking
+  daysTrackingEl.textContent = entries.length;
+
+  // Calculate current streak
+  const sortedDates = entries.map((entry) => entry.date).sort();
+  let streak = 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  for (let i = sortedDates.length - 1; i >= 0; i--) {
+    const entryDate = new Date(sortedDates[i]);
+    const dayDiff = Math.floor((today - entryDate) / (1000 * 60 * 60 * 24));
+
+    if (dayDiff === 0) {
+      streak++;
+      today.setDate(today.getDate() - 1);
+    } else if (dayDiff === 1) {
+      streak++;
+      today.setDate(today.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  currentStreakEl.textContent = streak;
+}
+
 // Initialize app
 function initApp() {
   // Ensure the modal is hidden on page load
@@ -229,6 +286,7 @@ function initApp() {
   const todayStr = `${year}-${month}-${day}`;
   entryDateInput.value = todayStr;
   renderCalendar();
+  updateStats();
 }
 
 initApp();
