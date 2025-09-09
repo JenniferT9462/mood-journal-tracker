@@ -247,47 +247,6 @@ function updateStats() {
   // Calculate days tracking
   daysTrackingEl.textContent = entries.length;
 
-  // Calculate current streak
-  const sortedDates = entries
-    .map((entry) => new Date(entry.date))
-    .sort((a, b) => a - b);
-
-  let streak = 0;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Filter out any entries that are in the future
-  const relevantDates = sortedDates.filter((date) => date <= today);
-
-  if (relevantDates.length > 0) {
-    // Check if the most recent relevant date is today or yesterday
-    const lastEntryDate = relevantDates[relevantDates.length - 1];
-    const dayDifferenceFromToday = Math.round(
-      (today.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if (dayDifferenceFromToday <= 1) {
-      streak = 1; // Start streak with the last valid entry
-
-      // Iterate backward from the second to last entry
-      for (let i = relevantDates.length - 2; i >= 0; i--) {
-        const currentDate = relevantDates[i];
-        const previousDate = relevantDates[i + 1];
-        const dayDiff = Math.round(
-          (previousDate.getTime() - currentDate.getTime()) /
-            (1000 * 60 * 60 * 24)
-        );
-
-        if (dayDiff === 1) {
-          streak++;
-        } else {
-          break; // Streak is broken
-        }
-      }
-    }
-  }
-
-  currentStreakEl.textContent = streak;
 }
 
 // Initialize app
