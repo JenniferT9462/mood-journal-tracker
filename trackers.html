@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Habit Trackers</title>
     <!-- Bootstrap CSS -->
     <link
@@ -13,57 +13,76 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- CSS -->
     <link rel="stylesheet" href="trackers.css" />
-</head>
-<body>
+  </head>
+  <body>
     <h1 class="text-center">Habit Trackers</h1>
     <div class="dashboard">
-    <!-- Calendar 1 -->
-    <div class="calendar-container shadow-md">
+      <!-- Calendar 1 -->
+      <div class="calendar-container shadow-md" id="calendar-af">
         <h2 class="text-center text-primary">No Alcohol</h2>
         <div class="calendar-header">
-            <h2 class="currentMonthYear"></h2>
-            <div>
-                <button class="prevMonth">⬅️</button>
-                <button class="nextMonth">➡️</button>
-            </div>
-           
+          <h2 class="currentMonthYear"></h2>
+          <div>
+            <button class="prevMonth">⬅️</button>
+            <button class="nextMonth">➡️</button>
+          </div>
         </div>
         <div class="calendar-weekdays">
-            <div>Sun</div>
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
         </div>
         <div class="calendar-grid" class="calendar-dates"></div>
-    </div>
-    <!-- Calendar 2 -->
-    <div class="calendar-container shadow-md">
+      </div>
+      <!-- Calendar 2 -->
+      <div class="calendar-container shadow-md" id="calendar-vitamins">
         <h2 class="text-center text-primary">Vitamins</h2>
         <div class="calendar-header">
-            <h2 class="currentMonthYear"></h2>
-            <div>
-                <button class="prevMonth">⬅️</button>
-                <button class="nextMonth">➡️</button>
-            </div>
-           
+          <h2 class="currentMonthYear"></h2>
+          <div>
+            <button class="prevMonth">⬅️</button>
+            <button class="nextMonth">➡️</button>
+          </div>
         </div>
         <div class="calendar-weekdays">
-            <div>Sun</div>
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
         </div>
         <div class="calendar-grid" class="calendar-dates"></div>
-    </div>
-</div>
+      </div>
 
+      <!-- Calendar 3 -->
+      <div class="calendar-container shadow-md" id="calendar-yoga">
+        <h2 class="text-center text-primary">Yoga</h2>
+        <div class="calendar-header">
+          <h2 class="currentMonthYear"></h2>
+          <div>
+            <button class="prevMonth">⬅️</button>
+            <button class="nextMonth">➡️</button>
+          </div>
+        </div>
+        <div class="calendar-weekdays">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+        </div>
+        <div class="calendar-grid" class="calendar-dates"></div>
+      </div>
+    </div>
 
     <script src="trackers.js"></script>
-</body>
+  </body>
 </html>

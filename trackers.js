@@ -4,6 +4,8 @@ console.log("Hello from trackers.js!");
 const calendars = document.querySelectorAll(".calendar-container");
 
 calendars.forEach(container => {
+    const storageKey = `habit_${container.id}`;
+
     // Get DOM Elements
     const prevMonthBtn = container.querySelector(".prevMonth");
     const nextMonthBtn = container.querySelector(".nextMonth");
@@ -11,6 +13,9 @@ calendars.forEach(container => {
     const currentMonthYear = container.querySelector(".currentMonthYear");
 
     let currentDate = new Date();
+
+    //Load saved days for this calendar
+    let savedDays = JSON.parse(localStorage.getItem(storageKey)) || [];
 
     function renderCalendar() {
         calendarGrid.innerHTML = "";
@@ -43,9 +48,25 @@ calendars.forEach(container => {
             dayDiv.textContent = i;
             dayDiv.classList.add("current-month");
 
+            //Unique date key (YYYY-MM-DD)
+            const dateKey = `${year}-${month +1}-${i}`;
+
+            //Pre-highlight if saved
+            if(savedDays.includes(dateKey)) {
+                dayDiv.classList.add("active");
+            }
+
             // Add event listener here
             dayDiv.addEventListener("click", () => {
                 dayDiv.classList.toggle("active"); // highlight/unhighlight
+
+                if(dayDiv.classList.contains("active")) {
+                    savedDays.push(dateKey);
+                } else {
+                    savedDays = savedDays.filter(day => day !== dateKey);
+                }
+
+                localStorage.setItem(storageKey, JSON.stringify(savedDays));
             });
             // You can add more classes or event listeners here for specific dates
             calendarGrid.appendChild(dayDiv);
