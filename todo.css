@@ -1,0 +1,11 @@
+
+    .drag-over {
+      background-color: #e0f7fa !important;
+      border: 2px dashed #0288d1;
+    }
+
+       /* Custom styles can go here if needed */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
