@@ -1,0 +1,110 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem; /* spacing between multiple calendars */
+  padding: 2rem;
+}
+
+/* Headings */
+h1 {
+  color: #6b21a8;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+h2 {
+  color: #7e22ce;
+  text-align: center;
+}
+
+/* ===== Dashboard layout for multiple calendars ===== */
+.dashboard {
+  display: flex;
+  justify-content: center;   /* center them horizontally */
+  align-items: flex-start;   /* align tops evenly */
+  gap: 2rem;                 /* space between calendars */
+  flex-wrap: wrap;           /* allow wrapping on smaller screens */
+}
+
+/* ====== Calendar ====== */
+.calendar-container {
+  width: 350px;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: rebeccapurple; /* theme */
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Header (Month navigation + title) */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendar-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.currentMonthYear {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Weekdays */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-weekdays div {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Dates grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.calendar-grid div {
+  aspect-ratio: 1 / 1;   /* perfect squares */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-grid .current-month {
+  color: white;
+}
+
+.calendar-grid .other-month {
+  color: #bbb; /* softer gray for outside days */
+}
+
+.calendar-grid div:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+}
+
+.calendar-grid .active {
+  background-color: rgba(0, 200, 100, 0.85);
+  font-weight: bold;
+  color: white;
+}
