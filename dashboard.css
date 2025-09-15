@@ -1,0 +1,41 @@
+/* Custom CSS to combine Tailwind and Bootstrap smoothly */
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f3f4f6;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+}
+
+.mood-icon {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: transform 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.mood-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.mood-icon.selected {
+  border: 3px solid #8618ab;
+  box-shadow: 0 0 12px rgba(151, 40, 168, 0.6);
+}
+#mood-options div {
+  min-width: 80px;
+}
+
+/* Styling for the animated progress bar */
+@keyframes fill-progress {
+  from {
+    width: 0%;
+  }
+}
+.animated-progress-bar {
+  animation: fill-progress 1.5s ease-out forwards;
+}
