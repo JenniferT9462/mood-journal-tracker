@@ -16,9 +16,11 @@ h1 {
 }
 
 h2 {
-  color: #7e22ce;
+  color: #20e1e7;
   text-align: center;
 }
+
+
 
 /* ===== Dashboard layout for multiple calendars ===== */
 .dashboard {
@@ -107,4 +109,11 @@ h2 {
   background-color: rgba(0, 200, 100, 0.85);
   font-weight: bold;
   color: white;
+}
+dialog::backdrop {
+  background-color: rgba(0,0,0,0.5);
+}
+dialog {
+ 
+  margin: auto;
 }
