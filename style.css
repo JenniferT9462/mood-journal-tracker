@@ -12,6 +12,38 @@ h2 {
   color: #7e22ce;
 }
 
+/* The side navigation menu */
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 75px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+ 
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #7e22ce;
+  color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #6b21a8;
+  color: white;
+}
+
 .mood-icon {
   width: 60px;
   height: 60px;

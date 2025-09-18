@@ -1,11 +1,7 @@
 body {
   font-family: "Inter", sans-serif;
   background-color: #f3f4f6;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem; /* spacing between multiple calendars */
-  padding: 2rem;
+
 }
 
 /* Headings */
@@ -16,17 +12,39 @@ h1 {
 }
 
 h2 {
-  color: #7e22ce;
+  color: #20e1e7;
   text-align: center;
 }
+/* The side navigation menu */
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 75px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+ 
+}
 
-/* ===== Dashboard layout for multiple calendars ===== */
-.dashboard {
-  display: flex;
-  justify-content: center;   /* center them horizontally */
-  align-items: flex-start;   /* align tops evenly */
-  gap: 2rem;                 /* space between calendars */
-  flex-wrap: wrap;           /* allow wrapping on smaller screens */
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #7e22ce;
+  color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #6b21a8;
+  color: white;
 }
 
 /* ====== Calendar ====== */
@@ -107,4 +125,11 @@ h2 {
   background-color: rgba(0, 200, 100, 0.85);
   font-weight: bold;
   color: white;
+}
+dialog::backdrop {
+  background-color: rgba(0,0,0,0.5);
+}
+dialog {
+ 
+  margin: auto;
 }
