@@ -1,12 +1,15 @@
 body {
+  margin: 0; /* remove browser default margin */
   font-family: "Inter", sans-serif;
-  background-color: #f3f4f6;
-
+   margin: 0;
+  padding-left: 75px; /* match sidebar width */
+  padding-top: 2rem; /* space from top */
+ 
 }
 
 /* Headings */
 h1 {
-  color: #6b21a8;
+  color: white;
   margin-bottom: 1rem;
   text-align: center;
 }
@@ -15,16 +18,29 @@ h2 {
   color: #20e1e7;
   text-align: center;
 }
+header {
+  margin-top: 2rem;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  
+}
+
+
 /* The side navigation menu */
 .sidebar {
+  position: fixed;
+  top: 0;           /* <-- ensure it sits flush with the top */
+  left: 0;
+  width: 75px;
+  height: 100vh;    /* full viewport height */
   margin: 0;
   padding: 0;
-  width: 75px;
   background-color: #f1f1f1;
-  position: fixed;
-  height: 100%;
-  overflow: auto;
- 
+  z-index: 9999;    /* keep it above other stuff */
 }
 
 /* Sidebar links */

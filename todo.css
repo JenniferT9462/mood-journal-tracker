@@ -1,11 +1,43 @@
+/* The side navigation menu */
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 75px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
 
-    .drag-over {
-      background-color: #e0f7fa !important;
-      border: 2px dashed #0288d1;
-    }
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
 
-       /* Custom styles can go here if needed */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+/* Active/current link */
+.sidebar a.active {
+  background-color: #7e22ce;
+  color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #6b21a8;
+  color: white;
+}
+.container {
+  margin-left: 90px; /* 75px + a little breathing room */
+}
+/* .drag-over {
+  background-color: #e0f7fa !important;
+  border: 2px dashed #0288d1;
+} */
+
+/* Custom styles can go here if needed */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap");
+body {
+  font-family: "Inter", sans-serif;
+}

@@ -16,15 +16,44 @@
   <body
     class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-teal-500 text-white font-sans"
   >
+    <!--TODO: Navigation -->
+    <!-- The sidebar -->
+    <div class="sidebar shadow-lg">
+      <a href="index.html">
+        <img src="assets/home.png" alt="Home Icon" title="Home" />
+      </a>
+      <a href="trackers.html">
+        <img src="assets/trackers.png" alt="Mood Icon" title="Habit Trackers" />
+      </a>
+      <a class="active" href="todo.html">
+        <img
+          
+          src="assets/note.png"
+          alt="Lists icon"
+          title="Lists"
+        />
+      </a>
+      <a href="entries.html">
+        <img
+          src="assets/blogs.png"
+          alt="Entries icon"
+          title="Journal Entries"
+        />
+      </a>
+    </div>
     <div class="container py-5">
       <!-- Header -->
-      <header class="p-6 text-center shadow-lg bg-black/20 backdrop-blur-sm rounded-2xl">
+      <header
+        class="p-6 text-center shadow-lg bg-black/20 backdrop-blur-sm rounded-2xl"
+      >
         <h1 class="text-4xl font-bold tracking-wide">✨ Lists ✨</h1>
         <p class="text-sm text-gray-200">Organize your tasks with style</p>
       </header>
 
       <!-- Add Task Input -->
-      <div class="p-6 shadow-lg bg-black/20 backdrop-blur-sm input-group rounded-2xl mt-4">
+      <div
+        class="p-6 shadow-lg bg-black/20 backdrop-blur-sm input-group rounded-2xl mt-4"
+      >
         <input
           id="taskInput"
           type="text"
@@ -34,8 +63,10 @@
         <button id="addTaskBtn" class="btn btn-primary">Add Task</button>
       </div>
 
-         <!-- Add Shopping Item Input -->
-      <div class="p-6 shadow-lg bg-black/20 backdrop-blur-sm input-group rounded-2xl mt-4">
+      <!-- Add Shopping Item Input -->
+      <div
+        class="p-6 shadow-lg bg-black/20 backdrop-blur-sm input-group rounded-2xl mt-4"
+      >
         <input
           id="shoppingInput"
           type="text"
@@ -46,54 +77,58 @@
       </div>
 
       <!-- List Columns -->
-    <main class="container py-10">
-      <div class="row g-4 justify-content-center">
-        <!-- To Do -->
-        <div class="col-md-4">
-          <div class="rounded-2xl bg-white/10 backdrop-blur-lg p-4 shadow-xl hover:shadow-2xl transition">
+      <main class="container py-10">
+        <div class="row g-4 justify-content-center">
+          <!-- To Do -->
+          <div class="col-md-4">
             <div
-              class="card-header text-white text-center font-bold d-flex justify-content-between align-items-center"
+              class="rounded-2xl bg-white/10 backdrop-blur-lg p-4 shadow-xl hover:shadow-2xl transition"
             >
-              <h2 class="text-2xl font-semibold mb-4 text-blue-200">📝 To Do</h2>
-              <button
-                class="btn btn-sm btn-light text-primary clearBtn"
-                data-target="todoList"
+              <div
+                class="card-header text-white text-center font-bold d-flex justify-content-between align-items-center"
               >
-                Clear All
-              </button>
+                <h2 class="text-2xl font-semibold mb-4 text-blue-200">
+                  📝 To Do
+                </h2>
+                <button
+                  class="btn btn-sm btn-light text-primary clearBtn"
+                  data-target="todoList"
+                >
+                  Clear All
+                </button>
+              </div>
+              <ul
+                id="todoList"
+                class="list-group list-group-flush min-h-[200px]"
+              ></ul>
             </div>
-            <ul
-              id="todoList"
-              class="list-group list-group-flush min-h-[200px]"
-            ></ul>
+          </div>
+
+          <!-- Shopping -->
+          <div class="col-md-4">
+            <div
+              class="rounded-2xl bg-white/10 backdrop-blur-lg p-4 shadow-xl hover:shadow-2xl transition"
+            >
+              <div
+                class="card-header text-white text-center font-bold d-flex justify-content-between align-items-center"
+              >
+                <h2 class="text-2xl font-semibold mb-4 text-blue-200">
+                  🛒 Shopping
+                </h2>
+                <button
+                  class="btn btn-sm btn-light text-primary clearBtn"
+                  data-target="shopping-list"
+                >
+                  Clear All
+                </button>
+              </div>
+              <ul
+                id="shopping-list"
+                class="list-group list-group-flush min-h-[200px]"
+              ></ul>
+            </div>
           </div>
         </div>
-
-        <!-- Shopping -->
-        <div class="col-md-4">
-          <div class="rounded-2xl bg-white/10 backdrop-blur-lg p-4 shadow-xl hover:shadow-2xl transition">
-            <div
-              class="card-header text-white text-center font-bold d-flex justify-content-between align-items-center"
-            >
-              <h2 class="text-2xl font-semibold mb-4 text-blue-200">🛒 Shopping</h2>
-              <button
-                class="btn btn-sm btn-light text-primary clearBtn"
-                data-target="shopping-list"
-              >
-                Clear All
-              </button>
-            </div>
-            <ul
-              id="shopping-list"
-              class="list-group list-group-flush min-h-[200px]"
-            ></ul>
-          </div>
-        </div>
-
-    
-
-     
-      </div>
       </main>
     </div>
 

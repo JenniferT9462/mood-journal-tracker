@@ -14,7 +14,9 @@
     <!-- CSS -->
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body
+    class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-teal-500 text-white font-sans"
+  >
     <!--TODO: Navigation -->
     <!-- The sidebar -->
     <div class="sidebar shadow-lg">
@@ -31,11 +33,17 @@
         <img src="assets/blogs.png" alt="Entries icon" title="Journal Entries">
       </a>
     </div>
-    <div class="bg-gray-100 min-h-screen flex flex-col items-center p-4 md:p-8">
+     <div class="max-w-6xl mx-auto px-4">
+      <!-- Header -->
+      <header
+        
+      >
+        <h1 class="text-4xl font-bold tracking-wide">✨ Mood Tracker & Journal ✨</h1>
+      
+      </header>
+    <div class="flex flex-col items-center p-4 md:p-8">
       <div class="w-full max-w-4xl bg-white p-6 md:p-8 rounded-xl shadow-lg">
-        <h1 class="text-3xl font-bold text-center text-purple-800 mb-6">
-          Mood Tracker & Journal
-        </h1>
+       
 
         <!-- Top Stats -->
         <!-- <div class="row text-center mb-4">
@@ -225,6 +233,7 @@
           </button>
         </div>
       </div>
+    </div>
     </div>
     <script src="script.js"></script>
   </body>
