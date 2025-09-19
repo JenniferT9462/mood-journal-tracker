@@ -36,6 +36,10 @@ header {
   /* Fixes the positioning */
   top: 0;
   left: 0;
+   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
 }
 
 /* Sidebar links */
