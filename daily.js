@@ -6,6 +6,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const checklist = document.getElementById("checklist");
   const careChecklist = document.getElementById("careChecklist"); 
 
+  // --- Local Storage Helpers ---
+  function saveData() {
+    const data = {
+      tasks: getListData(checklist),
+      care: getListData(careChecklist),
+    };
+    localStorage.setItem("checklists", JSON.stringify(data));
+  }
+
+   function loadData() {
+    const stored = localStorage.getItem("checklists");
+    return stored ? JSON.parse(stored) : { tasks: [], care: [] };
+  }
+
+  function getListData(listElement) {
+    return Array.from(listElement.querySelectorAll("li")).map((li) => {
+      const checkbox = li.querySelector("input[type=checkbox]");
+      const text = li.querySelector("span").textContent;
+      return { text, completed: checkbox.checked };
+    });
+  }
+
   // Function to add a new checklist item
   function addChecklistItem(text, completed = false, targetList = checklist) {
     const listItem = document.createElement("li");
@@ -19,24 +41,25 @@ document.addEventListener("DOMContentLoaded", () => {
       itemText.classList.add("completed");
     }
 
-    // Event listener for checkbox change
+       // Update localStorage when checkbox changes
     checkbox.addEventListener("change", () => {
       itemText.classList.toggle("completed", checkbox.checked);
-      // In a real application, you'd save this state (e.g., to local storage)
+      saveData();
     });
+  
 
     listItem.appendChild(checkbox);
     listItem.appendChild(itemText);
-    // checklist.appendChild(listItem);
     targetList.appendChild(listItem);
   }
 
-  // Event listener for adding new items
+  // --- Add task to main list ---
   addItemButton.addEventListener("click", () => {
     const itemText = newItemInput.value.trim();
     if (itemText !== "") {
-      addChecklistItem(itemText);
+      addChecklistItem(itemText, false, checklist);
       newItemInput.value = ""; // Clear input field
+      saveData();
     }
   });
 
@@ -47,17 +70,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Example initial items (can be loaded from storage in a real app)
-  addChecklistItem("Buy groceries", false, checklist);
-  addChecklistItem("Finish project report", true, checklist);
-  addChecklistItem("Call a friend", false, checklist);
 
-  // --- Care tasks ---
+
+  // --- Add task to care list ---
   addCareButton.addEventListener("click", () => {
     const itemText = newCareInput.value.trim();
     if (itemText !== "") {
       addChecklistItem(itemText, false, careChecklist);
       newCareInput.value = "";
+      saveData();
     }
   });
 
@@ -67,8 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-   addChecklistItem("Brush Hair", false, careChecklist);
-  addChecklistItem("Brush Teeth", true, careChecklist);
-  addChecklistItem("Wash Face", false, careChecklist);
+
+
+  // --- Initialize from localStorage ---
+  const saved = loadData();
+  saved.tasks.forEach((item) =>
+    addChecklistItem(item.text, item.completed, checklist)
+  );
+  saved.care.forEach((item) =>
+    addChecklistItem(item.text, item.completed, careChecklist)
+  );
 });
  
