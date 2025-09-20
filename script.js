@@ -79,10 +79,17 @@ function updateCalendarHeader() {
 /**
  * Saves entries to localStorage.
  */
-function saveEntries() {
-  localStorage.setItem("entries", JSON.stringify(entries));
+// On your journal entry page (index.html)
+function saveJournalEntry(entry) {
+    // 1. Get existing data with the key "entries"
+    const existingEntries = JSON.parse(localStorage.getItem('entries') || '[]');
+    
+    // 2. Add the new entry to the array
+    existingEntries.push(entry);
+    
+    // 3. Save the updated array back to localStorage with the key "entries"
+    localStorage.setItem('entries', JSON.stringify(existingEntries));
 }
-
 // --- Event Handlers ---
 
 /**
