@@ -1,111 +1,33 @@
 console.log("Hello from script.js!");
 
-// Store entries in localStorage
+// --- State Variables ---
 let entries = JSON.parse(localStorage.getItem("entries")) || [];
-
-// Get DOM elements
-const moodOptions = document.getElementById("mood-options");
-const journalEntry = document.getElementById("journal-entry");
-const calendar = document.getElementById("calendar");
-const daysTracked = document.getElementById("days-tracked");
-const streak = document.getElementById("streak");
-const avgMood = document.getElementById("avg-mood");
-const entryDateInput = document.getElementById("entry-date");
-const currentMonthYearEl = document.getElementById("current-month-year");
-const prevMonthBtn = document.getElementById("prev-month");
-const nextMonthBtn = document.getElementById("next-month");
-
-// Stats elements
-const averageMoodEl = document.getElementById("average-mood");
-const daysTrackingEl = document.getElementById("days-tracking");
-const currentStreakEl = document.getElementById("current-streak");
-
-// Modal elements
-const messageModal = document.getElementById("message-modal");
-const modalText = document.getElementById("modal-text");
-const modalCloseBtn = document.getElementById("modal-close");
-
-// Start selected mood at null
 let selectedMood = null;
-// To keep track of the month displayed on the calendar
 let currentDate = new Date();
 
-// Helper function to show modal messages
-function showModal(message) {
-  modalText.textContent = message;
-  messageModal.classList.remove("hidden");
-}
-// Close modal on button click
-modalCloseBtn.addEventListener("click", () => {
-  messageModal.classList.add("hidden");
-});
+// --- DOM Element References ---
+// All elements are defined here at the top.
+const DOM = {
+  moodOptions: document.getElementById("mood-options"),
+  journalEntry: document.getElementById("journal-entry"),
+  calendar: document.getElementById("calendar"),
+  entryDateInput: document.getElementById("entry-date"),
+  currentMonthYear: document.getElementById("current-month-year"),
+  prevMonthBtn: document.getElementById("prev-month"),
+  nextMonthBtn: document.getElementById("next-month"),
+  saveEntryBtn: document.getElementById("save-entry"),
+  averageMood: document.getElementById("average-mood"),
+  daysTracking: document.getElementById("days-tracking"),
+  currentStreak: document.getElementById("current-streak"),
+  messageModal: document.getElementById("message-modal"),
+  modalText: document.getElementById("modal-text"),
+  modalCloseBtn: document.getElementById("modal-close"),
+  menuBtn: document.getElementById("menu-btn"),
+  sidebar: document.querySelector(".sidebar"),
+};
 
-moodOptions.addEventListener("click", (e) => {
-  console.log("Mood Icon Clicked!");
-  const icon = e.target.closest(".mood-icon");
-  if (!icon) return;
-
-  selectedMood = icon.getAttribute("data-mood");
-
-  document
-    .querySelectorAll(".mood-icon")
-    .forEach((i) => i.classList.remove("selected"));
-  icon.classList.add("selected");
-
-  console.log("Mood selected ->", selectedMood);
-});
-
-// Event handler for the save entry button
-const saveEntryBtn = document.getElementById("save-entry");
-saveEntryBtn.addEventListener("click", function (e) {
-  console.log("Save Btn Clicked!");
-  // Prevent any accidental form submission (if inside form)
-  e.preventDefault();
-
-  const journalText = journalEntry.value;
-  const selectedDate = entryDateInput.value;
-
-  // Debug info — check these in browser console
-  console.log({ selectedMood, journalTextLength: journalText.length });
-
-  // validations
-  if (!selectedMood) {
-    // alert("Please select a mood before saving.");
-    showModal("Please select a mood before saving.");
-    return;
-  }
-
-  if (!journalText) {
-    // alert("Please write a journal entry before saving.");
-    showModal("Please write a journal entry before saving.");
-    return;
-  }
-
-  // Formatting the saved entry object data
-  const entry = { date: selectedDate, mood: selectedMood, journalText };
-
-  // Prevent duplicate entries by checking the date
-  entries = entries.filter((e) => e.date !== selectedDate);
-  entries.push(entry);
-
-  // Save to local storage
-  localStorage.setItem("entries", JSON.stringify(entries));
-
-  // Clear journal text area
-  journalEntry.value = "";
-  selectedMood = null;
-  document
-    .querySelectorAll(".mood-icon")
-    .forEach((icon) => icon.classList.remove("selected"));
-
-  // Render Calendar
-  renderCalendar();
-  // alert("Entry Saved!");
-  showModal("Entry Saved!");
-});
-
-// Render the calendar for the current month
-const moodEmojis = {
+// --- Constants ---
+const MOOD_EMOJIS = {
   happy: "assets/happy.png",
   excited: "assets/excited.png",
   calm: "assets/calm.png",
@@ -114,154 +36,275 @@ const moodEmojis = {
   angry: "assets/angry.png",
 };
 
+const MOOD_VALUES = {
+  happy: 5,
+  excited: 5,
+  calm: 4,
+  anxious: 2,
+  sad: 1,
+  angry: 1,
+};
+
+
+// --- Helper Functions ---
+
+/**
+ * Shows a modal with a specified message.
+ * @param {string} message - The message to display in the modal.
+ */
+function showModal(message) {
+  DOM.modalText.textContent = message;
+  DOM.messageModal.classList.remove("hidden");
+}
+
+/**
+ * Clears the selected mood from the UI.
+ */
+function clearMoodSelection() {
+  selectedMood = null;
+  document.querySelectorAll(".mood-icon.selected").forEach(icon => {
+    icon.classList.remove("selected");
+  });
+}
+
+/**
+ * Updates the calendar header to show the current month and year.
+ */
+function updateCalendarHeader() {
+  const monthName = currentDate.toLocaleString("default", { month: "long" });
+  const year = currentDate.getFullYear();
+  DOM.currentMonthYear.textContent = `${monthName} ${year}`;
+}
+
+/**
+ * Saves entries to localStorage.
+ */
+function saveEntries() {
+  localStorage.setItem("entries", JSON.stringify(entries));
+}
+
+// --- Event Handlers ---
+
+/**
+ * Handles the click event for mood icons.
+ * @param {MouseEvent} e - The click event object.
+ */
+function handleMoodSelection(e) {
+  const icon = e.target.closest(".mood-icon");
+  if (!icon) return;
+
+  clearMoodSelection();
+  selectedMood = icon.getAttribute("data-mood");
+  icon.classList.add("selected");
+}
+
+/**
+ * Handles the click event for saving a new journal entry.
+ * @param {MouseEvent} e - The click event object.
+ */
+async function handleEntrySave(e) {
+  e.preventDefault();
+
+  const journalText = DOM.journalEntry.value;
+  const selectedDate = DOM.entryDateInput.value;
+
+  if (!selectedMood) {
+    showModal("Please select a mood before saving.");
+    return;
+  }
+  if (!journalText) {
+    showModal("Please write a journal entry before saving.");
+    return;
+  }
+
+  const newEntry = {
+    date: selectedDate,
+    mood: selectedMood,
+    journalText
+  };
+
+  // Remove existing entry for the same date to prevent duplicates
+  entries = entries.filter(entry => entry.date !== selectedDate);
+  entries.push(newEntry);
+  saveEntries();
+
+  // Reset UI and state
+  DOM.journalEntry.value = "";
+  clearMoodSelection();
+  updateUI();
+  showModal("Entry Saved! 🎉");
+}
+
+/**
+ * Handles the click event for calendar days.
+ * @param {MouseEvent} e - The click event object.
+ */
+function handleCalendarClick(e) {
+  const dayBox = e.target.closest(".calendar-day");
+  if (!dayBox || dayBox.classList.contains("empty")) return;
+
+  const dateStr = dayBox.getAttribute("data-date");
+  DOM.entryDateInput.value = dateStr;
+
+  const entry = entries.find(e => e.date === dateStr);
+  clearMoodSelection();
+
+  if (entry) {
+    DOM.journalEntry.value = entry.journalText;
+    selectedMood = entry.mood;
+    const moodIcon = document.querySelector(`.mood-icon[data-mood="${entry.mood}"]`);
+    if (moodIcon) {
+      moodIcon.classList.add("selected");
+    }
+  } else {
+    DOM.journalEntry.value = "";
+  }
+}
+
+/**
+ * Handles calendar navigation (previous and next month).
+ * @param {number} monthChange - The number of months to change (e.g., -1 for previous).
+ */
+function handleMonthChange(monthChange) {
+  currentDate.setMonth(currentDate.getMonth() + monthChange);
+  updateUI();
+}
+
+// --- Main Render Functions ---
+
+/**
+ * Renders the calendar grid for the current month.
+ */
 function renderCalendar() {
-  calendar.innerHTML = "";
-  currentMonthYearEl.textContent = `${currentDate.toLocaleString("default", {
-    month: "long",
-  })} ${currentDate.getFullYear()}`;
+  DOM.calendar.innerHTML = "";
+  updateCalendarHeader();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
 
-  // Calendar grid
   const grid = document.createElement("div");
   grid.className = "calendar-grid";
 
-  //Add weekdays
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  weekdays.forEach((day) => {
-    const h = document.createElement("div");
-    h.className = "calendar-header";
-    h.textContent = day;
-    grid.appendChild(h);
+  weekdays.forEach(day => {
+    const header = document.createElement("div");
+    header.className = "calendar-header";
+    header.textContent = day;
+    grid.appendChild(header);
   });
 
-  // Empty slots before the 1st of the month
   for (let i = 0; i < firstDay; i++) {
     const empty = document.createElement("div");
     empty.className = "calendar-day empty";
     grid.appendChild(empty);
   }
 
-  //Fill in days
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-      day
-    ).padStart(2, "0")}`;
-    const entry = entries.find((e) => e.date === dateStr);
-
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const dayBox = document.createElement("div");
     dayBox.className = "calendar-day";
     dayBox.setAttribute("data-date", dateStr);
 
-    // Add day number
     const num = document.createElement("div");
     num.className = "day-number";
     num.textContent = day;
     dayBox.appendChild(num);
 
-    if (entry && entry.mood && moodEmojis[entry.mood]) {
+    const entry = entries.find(e => e.date === dateStr);
+    if (entry && MOOD_EMOJIS[entry.mood]) {
       const img = document.createElement("img");
-      img.src = moodEmojis[entry.mood];
+      img.src = MOOD_EMOJIS[entry.mood];
       img.alt = entry.mood;
-      img.className = "calendar-mood-icon"; // small dedicated class
+      img.className = "calendar-mood-icon";
       dayBox.appendChild(img);
     }
     grid.appendChild(dayBox);
   }
-  calendar.appendChild(grid);
+
+  DOM.calendar.appendChild(grid);
 }
 
-// Function to populate the form from a clicked day
-calendar.addEventListener("click", (e) => {
-  const dayBox = e.target.closest(".calendar-day");
-  if (dayBox && !dayBox.classList.contains("empty")) {
-    const selectedDateStr = dayBox.getAttribute("data-date");
-    entryDateInput.value = selectedDateStr;
-
-    const entry = entries.find((e) => e.date === selectedDateStr);
-
-    // Clear existing selection
-    document
-      .querySelectorAll(".mood-icon")
-      .forEach((icon) => icon.classList.remove("selected"));
-
-    if (entry) {
-      journalEntry.value = entry.journalText;
-      selectedMood = entry.mood;
-      const moodIcon = document.querySelector(
-        `.mood-icon[data-mood="${entry.mood}"]`
-      );
-      if (moodIcon) {
-        moodIcon.classList.add("selected");
-      }
-    } else {
-      // If no entry, clear the form
-      journalEntry.value = "";
-      selectedMood = null;
-    }
-  }
-});
-
-// Set up calendar navigation
-prevMonthBtn.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar();
-});
-
-nextMonthBtn.addEventListener("click", () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar();
-});
-
-// Function to calculate and update stats
+/**
+ * Calculates and updates the average mood and days tracked stats.
+ */
 function updateStats() {
   if (entries.length === 0) {
-    averageMoodEl.textContent = "--";
-    daysTrackingEl.textContent = "0";
-    currentStreakEl.textContent = "0";
+    DOM.averageMood.textContent = "--";
+    DOM.daysTracking.textContent = "0";
+    DOM.currentStreak.textContent = "0";
     return;
   }
 
-  const moodValues = {
-    happy: 5,
-    excited: 5,
-    calm: 4,
-    anxious: 2,
-    sad: 1,
-    angry: 1,
-  };
-
   // Calculate average mood
   const totalMoodValue = entries.reduce(
-    (sum, entry) => sum + moodValues[entry.mood],
+    (sum, entry) => sum + (MOOD_VALUES[entry.mood] || 0),
     0
   );
   const averageMood = totalMoodValue / entries.length;
-  averageMoodEl.textContent = averageMood.toFixed(1);
+  DOM.averageMood.textContent = averageMood.toFixed(1);
 
-  // Calculate days tracking
-  daysTrackingEl.textContent = entries.length;
+  // Calculate days tracked
+  DOM.daysTracking.textContent = entries.length;
 
+  // Calculate streak (simplified for now)
+  const sortedDates = entries.map(e => e.date).sort();
+  let currentStreak = 0;
+  if (sortedDates.length > 0) {
+    let streakCount = 1;
+    for (let i = sortedDates.length - 2; i >= 0; i--) {
+      const dayBefore = new Date(sortedDates[i]);
+      const currentDay = new Date(sortedDates[i + 1]);
+      const timeDifference = currentDay.getTime() - dayBefore.getTime();
+      const dayDifference = timeDifference / (1000 * 3600 * 24);
+
+      if (Math.abs(dayDifference) === 1) {
+        streakCount++;
+      } else {
+        break;
+      }
+    }
+    currentStreak = streakCount;
+  }
+  DOM.currentStreak.textContent = currentStreak;
 }
 
-// Initialize app
-function initApp() {
-  // Ensure the modal is hidden on page load
-  messageModal.classList.add("hidden");
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const todayStr = `${year}-${month}-${day}`;
-  entryDateInput.value = todayStr;
+/**
+ * Updates all relevant UI components: calendar and stats.
+ */
+function updateUI() {
   renderCalendar();
   updateStats();
 }
 
+/**
+ * Initializes the application by setting up event listeners and initial UI state.
+ */
+function initApp() {
+  // Attach event listeners
+  DOM.moodOptions.addEventListener("click", handleMoodSelection);
+  DOM.saveEntryBtn.addEventListener("click", handleEntrySave);
+  DOM.calendar.addEventListener("click", handleCalendarClick);
+  DOM.prevMonthBtn.addEventListener("click", () => handleMonthChange(-1));
+  DOM.nextMonthBtn.addEventListener("click", () => handleMonthChange(1));
+  DOM.modalCloseBtn.addEventListener("click", () => DOM.messageModal.classList.add("hidden"));
+
+  // Correctly placed and working menu button listener
+  if (DOM.menuBtn && DOM.sidebar) {
+    DOM.menuBtn.addEventListener("click", () => {
+      DOM.sidebar.classList.toggle("-translate-x-full");
+    });
+  }
+
+  // Set today's date on the input field
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  DOM.entryDateInput.value = todayStr;
+
+  // Initial render
+  updateUI();
+}
+
+// Start the app!
 initApp();

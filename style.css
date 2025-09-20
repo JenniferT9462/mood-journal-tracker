@@ -24,42 +24,54 @@ header {
   
 }
 
-/* The side navigation menu */
 .sidebar {
+  /* Common styles for all screen sizes */
   margin: 0;
   padding: 0;
-  width: 75px;
+  width: 75px; /* Fixed width for the sidebar */
   background-color: #f1f1f1;
-  position: fixed;
-  height: 100%;
   overflow: auto;
-  /* Fixes the positioning */
-  top: 0;
-  left: 0;
-   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   background-color: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(8px);
   border-radius: 1rem;
+  display: flex; /* Makes the sidebar a flex container */
+  flex-direction: column; /* Stacks icons vertically */
+  align-items: center; /* Centers icons horizontally */
 }
 
+/* On medium screens and up, the sidebar is not transformed and the body has a margin to the left */
+@media (min-width: 768px) {
+  .sidebar {
+    transform: none !important;
+  }
+}
 /* Sidebar links */
 .sidebar a {
-  display: block;
-  color: black;
-  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 75px; 
+  width: 75px; 
   text-decoration: none;
+  transition: background-color 0.2s, color 0.2s; 
+}
+/* Sidebar links */
+.sidebar a img {
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  display: block; /* Ensures the image behaves as a block element */
+  
 }
 
 /* Active/current link */
 .sidebar a.active {
   background-color: #7e22ce;
-  color: white;
 }
 
 /* Links on mouse-over */
 .sidebar a:hover:not(.active) {
   background-color: #6b21a8;
-  color: white;
 }
 
 
