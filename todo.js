@@ -167,6 +167,7 @@ function attachEventListeners() {
   if (DOM.menuBtn && DOM.sidebar) {
     DOM.menuBtn.addEventListener("click", () => {
       DOM.sidebar.classList.toggle("-translate-x-full");
+      
     });
   }
 
@@ -227,6 +228,12 @@ function attachEventListeners() {
 
 // --- Initialization ---
 function init() {
+  // // Correctly placed and working menu button listener
+  // if (DOM.menuBtn && DOM.sidebar) {
+  //   DOM.menuBtn.addEventListener("click", () => {
+  //     DOM.sidebar.classList.toggle("-translate-x-full");
+  //   });
+  // }
   attachEventListeners();
   loadLists();
 }
