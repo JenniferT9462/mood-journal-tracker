@@ -10,8 +10,6 @@ const dialog = document.getElementById("dialog");
 const menuBtn = document.getElementById("menu-btn");
 const sidebar = document.querySelector(".sidebar");
 
-
-
 // Show modal
 addCalendarBtn.addEventListener("click", () => dialog.showModal());
 cancelHabitBtn.addEventListener("click", () => dialog.close());
@@ -36,7 +34,11 @@ function createCalendarElement(habitName) {
   );
   container.id = `calendar-${calendarId}`;
   container.innerHTML = `
-    <h2 class="text-center text-primary text-xl font-semibold mb-2">${habitName}</h2>
+    <div class="flex flex-row justify-between items-center mb-2">
+      <h2 class="text-center text-primary text-xl font-semibold mb-2">${habitName}</h2>
+      <button class="deleteCalendar px-1 py-1 rounded bg-red-500 text-white hover:bg-red-600">❌</button>
+    </div>
+   
     <div class="calendar-header flex justify-between items-center mb-2">
       <h2 class="currentMonthYear text-lg font-medium"></h2>
       <div>
@@ -50,6 +52,21 @@ function createCalendarElement(habitName) {
     <div class="calendar-grid grid grid-cols-7 gap-1"></div>
   `;
   calendarsWrapper.appendChild(container);
+  // Add delete functionality
+  const deleteBtn = container.querySelector(".deleteCalendar");
+  deleteBtn.addEventListener("click", () => {
+    // Remove calendar from DOM
+    container.remove();
+
+    // Remove from habitList
+    habitList = habitList.filter((h) => h !== habitName);
+    localStorage.setItem("habitList", JSON.stringify(habitList));
+
+    // Remove specific habit’s day-tracking storage
+    const storageKey = `habit_${container.id}`;
+    localStorage.removeItem(storageKey);
+  });
+
   initializeCalendar(container);
 }
 
