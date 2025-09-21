@@ -182,7 +182,7 @@ header {
 }
 
 .modal-content {
-  background-color: white;
+  background-color: transparent;
   padding: 24px;
   border-radius: 12px;
   text-align: center;

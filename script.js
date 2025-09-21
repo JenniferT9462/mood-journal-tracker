@@ -5,6 +5,9 @@ let entries = JSON.parse(localStorage.getItem("entries")) || [];
 let selectedMood = null;
 let currentDate = new Date();
 
+
+
+
 // --- DOM Element References ---
 // All elements are defined here at the top.
 const DOM = {
@@ -133,7 +136,8 @@ async function handleEntrySave(e) {
   // Remove existing entry for the same date to prevent duplicates
   entries = entries.filter(entry => entry.date !== selectedDate);
   entries.push(newEntry);
-  saveEntries();
+  // saveEntries();
+  saveJournalEntry(newEntry)
 
   // Reset UI and state
   DOM.journalEntry.value = "";
