@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const newItemInput = document.getElementById("newTaskInput");
   const addItemButton = document.getElementById("addTaskButton");
@@ -5,6 +6,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const addCareButton = document.getElementById("addCareButton");
   const checklist = document.getElementById("checklist");
   const careChecklist = document.getElementById("careChecklist"); 
+
+  // --- Default Tasks ---
+  const defaultTasks = [
+    "Sweep",
+    "Dishes",
+    "Organize",
+    "Litter Box",
+    "Wipe Counters",
+    "Trash",
+    "Make Bed"
+  ];
+
+  const defaultCare = [
+    "Brush Hair",
+    "Brush Teeth",
+    "Wash Face",
+    "Vitamins"
+  ];
 
   // --- Local Storage Helpers ---
   function saveData() {
@@ -15,22 +34,25 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("checklists", JSON.stringify(data));
   }
 
-   function loadData() {
+  function loadData() {
     const stored = localStorage.getItem("checklists");
-    return stored ? JSON.parse(stored) : { tasks: [], care: [] };
+    return stored ? JSON.parse(stored) : null;
   }
 
   function getListData(listElement) {
     return Array.from(listElement.querySelectorAll("li")).map((li) => {
       const checkbox = li.querySelector("input[type=checkbox]");
       const text = li.querySelector("span").textContent;
-      return { text, completed: checkbox.checked };
+      const isDefault = li.dataset.default === "true";
+      return { text, completed: checkbox.checked, isDefault };
     });
   }
 
   // Function to add a new checklist item
-  function addChecklistItem(text, completed = false, targetList = checklist) {
+  function addChecklistItem(text, completed = false, targetList = checklist, isDefault = false) {
     const listItem = document.createElement("li");
+    listItem.dataset.default = isDefault;
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = completed;
@@ -41,15 +63,26 @@ document.addEventListener("DOMContentLoaded", () => {
       itemText.classList.add("completed");
     }
 
-       // Update localStorage when checkbox changes
     checkbox.addEventListener("change", () => {
       itemText.classList.toggle("completed", checkbox.checked);
       saveData();
     });
-  
 
     listItem.appendChild(checkbox);
     listItem.appendChild(itemText);
+
+    // Only allow delete for user-added tasks
+    if (!isDefault) {
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "❌";
+      deleteBtn.classList.add("ml-2");
+      deleteBtn.addEventListener("click", () => {
+        listItem.remove();
+        saveData();
+      });
+      listItem.appendChild(deleteBtn);
+    }
+
     targetList.appendChild(listItem);
   }
 
@@ -57,26 +90,23 @@ document.addEventListener("DOMContentLoaded", () => {
   addItemButton.addEventListener("click", () => {
     const itemText = newItemInput.value.trim();
     if (itemText !== "") {
-      addChecklistItem(itemText, false, checklist);
-      newItemInput.value = ""; // Clear input field
+      addChecklistItem(itemText, false, checklist, false);
+      newItemInput.value = ""; 
       saveData();
     }
   });
 
-  // Allow adding items by pressing Enter in the input field
   newItemInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
       addItemButton.click();
     }
   });
 
-
-
   // --- Add task to care list ---
   addCareButton.addEventListener("click", () => {
     const itemText = newCareInput.value.trim();
     if (itemText !== "") {
-      addChecklistItem(itemText, false, careChecklist);
+      addChecklistItem(itemText, false, careChecklist, false);
       newCareInput.value = "";
       saveData();
     }
@@ -88,15 +118,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
-
-  // --- Initialize from localStorage ---
+  // --- Initialize ---
   const saved = loadData();
-  saved.tasks.forEach((item) =>
-    addChecklistItem(item.text, item.completed, checklist)
-  );
-  saved.care.forEach((item) =>
-    addChecklistItem(item.text, item.completed, careChecklist)
-  );
+  if (saved) {
+    saved.tasks.forEach((item) =>
+      addChecklistItem(item.text, item.completed, checklist, item.isDefault === "true" || item.isDefault === true)
+    );
+    saved.care.forEach((item) =>
+      addChecklistItem(item.text, item.completed, careChecklist, item.isDefault === "true" || item.isDefault === true)
+    );
+  } else {
+    // First time → load defaults
+    defaultTasks.forEach((task) => addChecklistItem(task, false, checklist, true));
+    defaultCare.forEach((care) => addChecklistItem(care, false, careChecklist, true));
+    saveData();
+  }
 });
- 
+

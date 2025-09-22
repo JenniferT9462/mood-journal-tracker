@@ -53,7 +53,7 @@ function renderTasksSnapshot() {
 
 // Main function to load and display all data
 function renderDashboard() {
-  renderTasksSnapshot();
+  // renderTasksSnapshot();
   renderJournalSnapshot();
   renderHabitSnapshot();
   renderNotesSnapshot();
