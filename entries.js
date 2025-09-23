@@ -13,6 +13,17 @@ const container = document.getElementById("entries-container");
 // Load entries
 const entries = JSON.parse(localStorage.getItem("entries")) || [];
 
+// Modal elements
+const editModal = document.getElementById("editModal");
+const editDate = document.getElementById("editDate");
+const editMoodOptions = document.getElementById("editMoodOptions");
+const editText = document.getElementById("editText");
+const saveEdit = document.getElementById("saveEdit");
+const cancelEdit = document.getElementById("cancelEdit");
+
+let editIndex = null; // which entry we’re editing
+let selectedMood = null;
+
 function renderEntries() {
   container.innerHTML = "";
 
@@ -29,57 +40,99 @@ function renderEntries() {
     card.innerHTML = `
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-purple-700">${entry.date}</h2>
-        <img src="${MOOD_EMOJIS[entry.mood]}" alt="${entry.mood}" class="w-12 h-12"/>
+        <img src="${MOOD_EMOJIS[entry.mood]}" alt="${
+      entry.mood
+    }" class="w-12 h-12"/>
       </div>
-      <p class="text-gray-800 bg-white/60 p-4 rounded-lg shadow-inner">${entry.journalText}</p>
+      <p class="text-gray-800 bg-white/60 p-4 rounded-lg shadow-inner">${
+        entry.journalText
+      }</p>
       <div class="flex justify-end gap-3 mt-4">
         <button class="edit-btn text-blue-500 hover:text-blue-700">✏️ Edit</button>
         <button class="delete-btn text-red-500 hover:text-red-700">🗑️ Delete</button>
       </div>
     `;
     // Attach button logic
-    card.querySelector(".edit-btn").addEventListener("click", () => editEntry(index));
-    card.querySelector(".delete-btn").addEventListener("click", () => deleteEntry(index));
-
-
+    card
+      .querySelector(".edit-btn")
+      .addEventListener("click", () => openEditModal(index));
+    card
+      .querySelector(".delete-btn")
+      .addEventListener("click", () => deleteEntry(index));
 
     container.appendChild(card);
   });
 }
 
-function editEntry(index) {
-    const entry = entries[index];
+// --- Edit Modal Functions ---
+function openEditModal(index) {
+  editIndex = index;
+  const entry = entries[index];
 
-    //Prompt for new values (keep old if user cancels/empties)
-    const newDate = prompt("Edit date: ", entry.date) || entry.date;
-    const newMood = prompt("Edit Mood (happy, excited, calm, anxious, sad, angry):",
-    entry.mood) || entry.mood;
-    const newText = prompt("Edit your entry: ", entry.journalText) || entry.journalText;
-    const moodKey = newMood.toLowerCase();
-    if (!MOOD_EMOJIS[moodKey]) {
-        alert("Invalid mood. Keeping the previous one.")
+  // preload values
+  editDate.value = entry.date;
+  selectedMood = entry.mood;
+  editText.value = entry.journalText;
+
+  // highlight the selected mood icon
+  Array.from(editMoodOptions.children).forEach((img) => {
+    if (img.dataset.mood === selectedMood) {
+      img.classList.add("border-purple-500");
+    } else {
+      img.classList.remove("border-purple-500");
     }
+  });
 
-    entries[index] = {
-        date: newDate,
-        mood: MOOD_EMOJIS[moodKey] ? moodKey : entry.mood,
-        journalText: newText,
+  editModal.classList.remove("hidden");
+}
+
+// handle mood selection
+Array.from(editMoodOptions.children).forEach((img) => {
+  img.addEventListener("click", () => {
+    selectedMood = img.dataset.mood;
+
+    // update border highlight
+    Array.from(editMoodOptions.children).forEach((i) =>
+      i.classList.remove("border-purple-500")
+    );
+    img.classList.add("border-purple-500");
+  });
+});
+
+saveEdit.addEventListener("click", () => {
+  if (editIndex !== null) {
+    const updatedDate = editDate.value.trim() || entries[editIndex].date;
+
+    const updatedText = editText.value.trim() || entries[editIndex].journalText;
+
+    entries[editIndex] = {
+      date: updatedDate,
+      mood: selectedMood,
+      journalText: updatedText,
     };
 
-    
     saveEntries();
+  }
+  closeEditModal();
+});
+
+cancelEdit.addEventListener("click", closeEditModal);
+
+function closeEditModal() {
+  editIndex = null;
+  editModal.classList.add("hidden");
 }
 
 function deleteEntry(index) {
-    if(confirm("Are you sure you want to delete this entry?")) {
-        entries.splice(index, 1);
-        saveEntries();
-    }
+  if (confirm("Are you sure you want to delete this entry?")) {
+    entries.splice(index, 1);
+    saveEntries();
+  }
 }
 
 function saveEntries() {
-    localStorage.setItem("entries", JSON.stringify(entries));
-    renderEntries();
+  localStorage.setItem("entries", JSON.stringify(entries));
+  renderEntries();
 }
 
 renderEntries();
