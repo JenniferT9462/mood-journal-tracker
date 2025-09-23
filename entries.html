@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Journal Entries</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Sidebar (reuse same as other pages) -->
+  <button id="menu-btn" class="fixed top-4 left-4 z-20 md:hidden bg-purple-600 text-white p-2 rounded-full shadow-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  </button>
+
+  <div class="sidebar fixed inset-y-0 left-0 transform -translate-x-full transition-transform ease-in-out duration-300 z-10 md:translate-x-0 md:flex flex-col gap-y-4">
+    <a href="index.html"><img src="assets/home.png" alt="Home Icon" title="Home" /></a>
+    <a href="trackers.html"><img src="assets/trackers.png" alt="Trackers Icon" title="Habit Trackers" /></a>
+    <a href="lists.html"><img src="assets/note.png" alt="Lists icon" title="Lists" /></a>
+    <a class="active" href="entries.html"><img src="assets/blogs.png" alt="Entries icon" title="Journal Entries" /></a>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content flex-grow md:ml-[75px] p-6">
+    <header>
+      <h1 class="text-4xl font-bold tracking-wide text-center">📖 Your Journal Entries</h1>
+    </header>
+
+    <!-- Container for entries -->
+    <div id="entries-container" class="mt-8 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <ul id="taskList"></ul>
+    </div>
+  </div>
+
+  <script src="entries.js"></script>
+</body>
+</html>
