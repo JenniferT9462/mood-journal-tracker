@@ -12,6 +12,10 @@ const container = document.getElementById("entries-container");
 
 // Load entries
 const entries = JSON.parse(localStorage.getItem("entries")) || [];
+async function loadEntries() {
+  const res = await fetch("/api/journal");
+  return await res.json();
+}
 
 // Modal elements
 const editModal = document.getElementById("editModal");
