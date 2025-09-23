@@ -121,59 +121,65 @@ function createNote(listElement, noteText = "") {
   });
 }
 
-// --- Helper Functions ---
 
-/**
- * Saves all lists to localStorage.
- */
-function saveLists() {
-  const allLists = [];
-  DOM.listsContainer.querySelectorAll('[data-custom="true"]').forEach((col) => {
-    const name = col.querySelector("h2").textContent.trim();
-    const type = col.dataset.type || "checklist";
-    let items = [];
+// --- API Functions ---
+async function saveLists() {
+    const allLists = [];
+    DOM.listsContainer.querySelectorAll('[data-custom="true"]').forEach((col) => {
+        const name = col.querySelector("h2").textContent.trim();
+        const type = col.dataset.type || "checklist";
+        let items = [];
 
-    if (type === "checklist") {
-      items = Array.from(col.querySelectorAll("ul li"))
-        .map((li) => {
-          const textElement = li.querySelector("span:not(.w-5)");
-          const text = textElement ? textElement.textContent.trim() : "";
-          return {
-            text,
-            completed: li.dataset.completed === "true",
-          };
-        })
-        .filter((item) => item.text !== ""); // Filter out empty items
-    } else if (type === "notes") {
-      items = [col.querySelector("p")?.textContent || ""];
+        if (type === "checklist") {
+            items = Array.from(col.querySelectorAll("ul li"))
+                .map((li) => {
+                    const textElement = li.querySelector("span:not(.w-5)");
+                    const text = textElement ? textElement.textContent.trim() : "";
+                    return {
+                        text,
+                        completed: li.dataset.completed === "true",
+                    };
+                })
+                .filter((item) => item.text !== "");
+        } else if (type === "notes") {
+            items = [col.querySelector("p")?.textContent || ""];
+        }
+
+        allLists.push({ name, type, items });
+    });
+
+    try {
+        // --- CHANGE 1: REPLACE localStorage.setItem with fetch() POST ---
+        await fetch("/api/lists", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(allLists),
+        });
+    } catch (e) {
+        console.error("Error saving lists to server:", e);
+    }
+}
+
+async function loadLists() {
+    let allLists = [];
+    try {
+        // --- CHANGE 2: REPLACE localStorage.getItem with fetch() GET ---
+        const response = await fetch("/api/lists");
+        if (!response.ok) {
+            throw new Error("Failed to load lists");
+        }
+        allLists = await response.json();
+    } catch (e) {
+        console.error("Error loading lists from server:", e);
+        allLists = [];
     }
 
-    allLists.push({ name, type, items });
-  });
-
-  try {
-    localStorage.setItem("allLists", JSON.stringify(allLists));
-  } catch (e) {
-    console.error("Error saving to localStorage", e);
-  }
-}
-/**
- * Loads all lists from localStorage.
- */
-function loadLists() {
-  let allLists = [];
-  try {
-    allLists = JSON.parse(localStorage.getItem("allLists")) || [];
-  } catch (e) {
-    console.error("Error parsing localStorage data", e);
-    // Fallback to an empty array if data is corrupted
-    allLists = [];
-  }
-
-  DOM.listsContainer.innerHTML = "";
-  allLists.forEach((list) => {
-    renderNewList(list.name, list.type, list.items, false);
-  });
+    DOM.listsContainer.innerHTML = "";
+    allLists.forEach((list) => {
+        renderNewList(list.name, list.type, list.items, false);
+    });
 }
 
 function renderNewList(

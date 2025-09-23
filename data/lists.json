@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "name": "Shopping",
+    "type": "checklist",
+    "items": [
+      {
+        "text": "Garbage Bags",
+        "completed": false
+      }
+    ]
+  },
+  {
+    "name": "Project Ideas",
+    "type": "notes",
+    "items": [
+      "Gardening App"
+    ]
+  }
+]

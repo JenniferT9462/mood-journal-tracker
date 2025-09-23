@@ -1,6 +1,4 @@
-console.log("Hello from trackers.js!");
-
-// DOM elements
+// --- DOM Elements ---
 const calendarsWrapper = document.getElementById("calendars-wrapper");
 const addCalendarBtn = document.getElementById("add-calendar-btn");
 const saveHabitBtn = document.getElementById("save-habit-btn");
@@ -10,35 +8,32 @@ const dialog = document.getElementById("dialog");
 const menuBtn = document.getElementById("menu-btn");
 const sidebar = document.querySelector(".sidebar");
 
-// Show modal
 addCalendarBtn.addEventListener("click", () => dialog.showModal());
 cancelHabitBtn.addEventListener("click", () => dialog.close());
 
-// Habit list in localStorage
-let habitList = JSON.parse(localStorage.getItem("habitList")) || [
-  "No Alcohol",
-  "Vitamins",
-  "Yoga",
-];
+// --- Habit List ---
+let habitList = [];
 
-// Function to create a calendar element
-function createCalendarElement(habitName) {
+async function loadHabits() {
+  const res = await fetch("/api/habits");
+  habitList = await res.json();
+  habitList.forEach(h => {
+    console.log("Loaded habit:", h.name, h.trackedDays);
+    createCalendarElement(h.name, h.trackedDays);
+  });
+}
+// --- Create Calendar Element ---
+function createCalendarElement(habitName, trackedDays = []) {
   const calendarId = habitName.toLowerCase().replace(/\s+/g, "-");
   const container = document.createElement("div");
-  container.classList.add(
-    "calendar-container",
-    "shadow-md",
-    "p-4",
-    "bg-white",
-    "rounded-lg"
-  );
+  container.classList.add("calendar-container", "shadow-md", "p-4", "bg-white", "rounded-lg");
   container.id = `calendar-${calendarId}`;
+
   container.innerHTML = `
     <div class="flex flex-row justify-between items-center mb-2">
       <h2 class="text-center text-primary text-xl font-semibold mb-2">${habitName}</h2>
       <button class="deleteCalendar px-1 py-1 rounded bg-red-500 text-white hover:bg-red-600">❌</button>
     </div>
-   
     <div class="calendar-header flex justify-between items-center mb-2">
       <h2 class="currentMonthYear text-lg font-medium"></h2>
       <div>
@@ -51,44 +46,52 @@ function createCalendarElement(habitName) {
     </div>
     <div class="calendar-grid grid grid-cols-7 gap-1"></div>
   `;
+
   calendarsWrapper.appendChild(container);
-  // Add delete functionality
+
+  // Delete calendar
   const deleteBtn = container.querySelector(".deleteCalendar");
-  deleteBtn.addEventListener("click", () => {
-    // Remove calendar from DOM
+  deleteBtn.addEventListener("click", async () => {
     container.remove();
-
-    // Remove from habitList
-    habitList = habitList.filter((h) => h !== habitName);
-    localStorage.setItem("habitList", JSON.stringify(habitList));
-
-    // Remove specific habit’s day-tracking storage
-    const storageKey = `habit_${container.id}`;
-    localStorage.removeItem(storageKey);
+    await fetch(`/api/habits/${encodeURIComponent(habitName)}`, { method: "DELETE" });
+    habitList = habitList.filter(h => h.name !== habitName);
   });
 
-  initializeCalendar(container);
+  initializeCalendar(container, habitName, trackedDays);
 }
 
-// Function to initialize a calendar
-function initializeCalendar(container) {
-  const storageKey = `habit_${container.id}`;
+// --- Initialize Calendar ---
+function initializeCalendar(container, habitName, trackedDays = []) {
   const prevMonthBtn = container.querySelector(".prevMonth");
   const nextMonthBtn = container.querySelector(".nextMonth");
   const calendarGrid = container.querySelector(".calendar-grid");
   const currentMonthYear = container.querySelector(".currentMonthYear");
 
   let currentDate = new Date();
-  let savedDays = JSON.parse(localStorage.getItem(storageKey)) || [];
+  let savedDays = [...trackedDays];
 
+  // Save tracked days for this habit
+async function saveTrackedDays() {
+  const response = await fetch("/api/habits", {
+    method: "POST", // your backend already handles create/update
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: habitName, trackedDays: savedDays }),
+  });
+  const result = await response.json();
+  console.log("Saved trackedDays:", savedDays, result);
+}
+
+  // Render calendar grid
   function renderCalendar() {
     calendarGrid.innerHTML = "";
+
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    currentMonthYear.textContent = new Date(year, month).toLocaleString(
-      "default",
-      { month: "long", year: "numeric" }
-    );
+
+    currentMonthYear.textContent = new Date(year, month).toLocaleString("default", {
+      month: "long",
+      year: "numeric",
+    });
 
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
@@ -98,45 +101,44 @@ function initializeCalendar(container) {
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       const dayDiv = document.createElement("div");
       dayDiv.textContent = lastDayPrevMonth - i;
-      dayDiv.classList.add("other-month", "text-gray-400");
+      dayDiv.classList.add("text-gray-400", "other-month", "text-center", "p-1");
       calendarGrid.appendChild(dayDiv);
     }
 
-    // Current month
+    // Current month days
     for (let i = 1; i <= lastDayOfMonth; i++) {
       const dayDiv = document.createElement("div");
       dayDiv.textContent = i;
-      dayDiv.classList.add(
-        "current-month",
-        "p-1",
-        "text-center",
-        "cursor-pointer"
-      );
+      dayDiv.classList.add("current-month", "text-center", "cursor-pointer", "p-1", "rounded");
 
       const dateKey = `${year}-${month + 1}-${i}`;
-      if (savedDays.includes(dateKey)) dayDiv.classList.add("active");
+      if (savedDays.includes(dateKey)) dayDiv.classList.add("bg-purple-500", "text-white");
 
-      dayDiv.addEventListener("click", () => {
-        dayDiv.classList.toggle("active");
-        if (dayDiv.classList.contains("active")) savedDays.push(dateKey);
-        else savedDays = savedDays.filter((day) => day !== dateKey);
-        localStorage.setItem(storageKey, JSON.stringify(savedDays));
+      dayDiv.addEventListener("click", async () => {
+        dayDiv.classList.toggle("bg-purple-500");
+        dayDiv.classList.toggle("text-white");
+
+        if (savedDays.includes(dateKey)) savedDays = savedDays.filter(d => d !== dateKey);
+        else savedDays.push(dateKey);
+
+        await saveTrackedDays();
       });
 
       calendarGrid.appendChild(dayDiv);
     }
 
-    // Next month padding
+    // Next month padding to fill 42 cells
     const totalCells = calendarGrid.children.length;
     const remainingCells = 42 - totalCells;
     for (let i = 1; i <= remainingCells; i++) {
       const dayDiv = document.createElement("div");
       dayDiv.textContent = i;
-      dayDiv.classList.add("other-month", "text-gray-400");
+      dayDiv.classList.add("text-gray-400", "other-month", "text-center", "p-1");
       calendarGrid.appendChild(dayDiv);
     }
   }
 
+  // Prev/Next month buttons
   prevMonthBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
@@ -150,24 +152,28 @@ function initializeCalendar(container) {
   renderCalendar();
 }
 
-// Render all calendars on page load
-habitList.forEach(createCalendarElement);
-
-// Save new habit calendar
-saveHabitBtn.addEventListener("click", () => {
+// --- Add New Habit ---
+saveHabitBtn.addEventListener("click", async () => {
   const habitName = habitNameInput.value.trim();
   if (!habitName) return alert("Please enter a habit name");
 
-  habitList.push(habitName);
-  localStorage.setItem("habitList", JSON.stringify(habitList));
+  habitList.push({ name: habitName, trackedDays: [] });
 
-  createCalendarElement(habitName);
+  await fetch("/api/habits", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: habitName, trackedDays: [] }),
+  });
+
+  createCalendarElement(habitName, []);
   habitNameInput.value = "";
   dialog.close();
 });
-// // Correctly placed and working menu button listener
+
+// --- Menu Toggle ---
 if (menuBtn && sidebar) {
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("-translate-x-full");
-  });
+  menuBtn.addEventListener("click", () => sidebar.classList.toggle("-translate-x-full"));
 }
+
+// --- Load Habits on Page Load ---
+loadHabits();
