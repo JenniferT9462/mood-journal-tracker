@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Daily Tasks",
+    "type": "checklist",
+    "items": [
+      {
+        "text": "Sweep",
+        "completed": true,
+        "isDefault": false
+      },
+      {
+        "text": "Dishes",
+        "completed": true,
+        "isDefault": false
+      },
+      {
+        "text": "Organize",
+        "completed": false,
+        "isDefault": false
+      },
+      {
+        "text": "Litter Box",
+        "completed": false,
+        "isDefault": false
+      },
+      {
+        "text": "Wipe Counters",
+        "completed": false,
+        "isDefault": false
+      },
+      {
+        "text": "Trash",
+        "completed": true,
+        "isDefault": false
+      },
+      {
+        "text": "Make Bed",
+        "completed": false,
+        "isDefault": false
+      }
+    ]
+  },
+  {
+    "name": "Self Care",
+    "type": "checklist",
+    "items": [
+      {
+        "text": "Brush Hair",
+        "completed": true,
+        "isDefault": false
+      },
+      {
+        "text": "Brush Teeth",
+        "completed": false,
+        "isDefault": false
+      },
+      {
+        "text": "Wash Face",
+        "completed": false,
+        "isDefault": false
+      },
+      {
+        "text": "Vitamins",
+        "completed": true,
+        "isDefault": false
+      },
+      {
+        "text": "Yoga",
+        "completed": false,
+        "isDefault": false
+      }
+    ]
+  }
+]

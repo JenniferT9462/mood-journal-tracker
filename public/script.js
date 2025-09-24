@@ -1,147 +1,192 @@
 console.log("Hello from dashboard.js!");
 
+// --- API Functions ---
+async function fetchJournalEntries() {
+    try {
+        const response = await fetch("/api/entries");
+        if (!response.ok) throw new Error("Failed to fetch journal entries");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching journal entries:", error);
+        return [];
+    }
+}
+
+async function fetchHabits() {
+    try {
+        const response = await fetch("/api/habits");
+        if (!response.ok) throw new Error("Failed to fetch habits");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching habits:", error);
+        return [];
+    }
+}
+
+async function fetchLists() {
+    try {
+        const response = await fetch("/api/lists");
+        if (!response.ok) throw new Error("Failed to fetch lists");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching lists:", error);
+        return [];
+    }
+}
+
+// --- API Functions for Tasks ---
+async function fetchTasks() {
+    try {
+        const response = await fetch("/api/tasks");
+        if (!response.ok) throw new Error("Failed to fetch tasks");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching tasks:", error);
+        return [];
+    }
+}
+
+async function saveTasks(tasks) {
+    try {
+        await fetch("/api/tasks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(tasks),
+        });
+    } catch (error) {
+        console.error("Error saving tasks:", error);
+    }
+}
+
+// --- Render Functions ---
+async function renderJournalSnapshot() {
+    const journalList = document.getElementById("journal-list");
+    journalList.innerHTML = "";
+
+    const entries = await fetchJournalEntries();
+
+    if (entries.length === 0) {
+        journalList.innerHTML = '<li class="text-gray-400">No journal entries yet.</li>';
+        return;
+    }
+
+    const latestEntries = entries.slice(-3).reverse();
+    latestEntries.forEach((entry) => {
+        const li = document.createElement("li");
+        li.className = "border-b border-gray-200 pb-2 last:border-b-0 last:pb-0";
+        const date = entry.date || "No date";
+        const content = entry.journalText || "No content";
+
+        li.textContent = `${date}: ${content.substring(0, 50)}...`;
+        journalList.appendChild(li);
+    });
+}
+
+async function renderHabitSnapshot() {
+    const habitsList = document.getElementById("habits-list");
+    habitsList.innerHTML = "";
+
+    const habits = await fetchHabits();
+
+    if (habits.length === 0) {
+        habitsList.innerHTML = '<li class="text-gray-400">No habits added yet.</li>';
+        return;
+    }
+
+    habits.forEach((habit) => {
+        const li = document.createElement("li");
+        li.className = "border-b border-gray-200 pb-2 last:border-b-0 last:pb-0";
+        li.innerHTML = `<span class="font-medium">✅ ${habit.name}</span>`;
+        habitsList.appendChild(li);
+    });
+}
+
+async function renderNotesSnapshot() {
+    const notesList = document.getElementById("notes-list");
+    notesList.innerHTML = "";
+
+    const notes = await fetchLists();
+
+    if (notes.length === 0) {
+        notesList.innerHTML = '<li class="text-gray-400">No notes or lists yet.</li>';
+        return;
+    }
+
+    const latestNotes = notes.slice(-3).reverse();
+    latestNotes.forEach((note) => {
+        const li = document.createElement("li");
+        li.className = "border-b border-gray-200 pb-2 last:border-b-0 last:pb-0";
+        const title = note.name || "Untitled";
+
+        const itemsPreview = Array.isArray(note.items) && note.items.length > 0
+            ? note.items.map(item => typeof item === 'object' ? item.text : item).join(", ")
+            : "No items";
+
+        li.textContent = `${title}: ${itemsPreview}`;
+        notesList.appendChild(li);
+    });
+}
+
+async function renderTasksSnapshot() {
+    const tasksList = document.getElementById("checklist");
+    const careList = document.getElementById("careChecklist");
+    if (!tasksList || !careList) {
+        console.warn("Skipping renderTasksSnapshot - elements not found.");
+        return;
+    }
+
+    // Clear existing lists using innerHTML
+    tasksList.innerHTML = "";
+    careList.innerHTML = "";
+
+    const allLists = await fetchTasks();
+    const tasks = allLists.find(list => list.name === "Daily Tasks")?.items || [];
+    const care = allLists.find(list => list.name === "Self Care")?.items || [];
+
+    // Helper function to render a list item for the dashboard using innerHTML
+    function renderItem(item) {
+        // The HTML string includes the delete button for non-default items
+        const deleteButtonHtml = item.isDefault ? '' : '<button class="ml-2">❌</button>';
+        const completedClass = item.completed ? 'line-through text-gray-400' : '';
+
+        return `
+            <li class="flex items-center gap-2">
+                <input type="checkbox" ${item.completed ? "checked" : ""}>
+                <span class="${completedClass}">${item.text}</span>
+                ${deleteButtonHtml}
+            </li>
+        `;
+    }
+    // Render tasks
+    if (tasks.length === 0) {
+        tasksList.innerHTML = '<li class="text-gray-400">No tasks yet.</li>';
+    } else {
+        // Render all tasks, not just a slice
+        tasks.forEach(task => tasksList.innerHTML += renderItem(task));
+    }
+
+    // Render self care
+    if (care.length === 0) {
+        careList.innerHTML = '<li class="text-gray-400">No self care items yet.</li>';
+    } else {
+        // Render all care items, not just a slice
+        care.forEach(item => careList.innerHTML += renderItem(item));
+    }
+    
+}
+
+async function renderDashboard() {
+    await renderJournalSnapshot();
+    await renderHabitSnapshot();
+    await renderNotesSnapshot();
+    await renderTasksSnapshot();
+}
 document.addEventListener("DOMContentLoaded", () => {
-  renderDashboard();
+    renderDashboard();
 });
-
-function renderTasksSnapshot() {
-  const tasksList = document.getElementById("tasks-list");
-  const careList = document.getElementById("care-list");
-
-  tasksList.innerHTML = "";
-  careList.innerHTML = "";
-
-  const checklists = JSON.parse(
-    localStorage.getItem("checklists") || '{"tasks":[],"care":[]}'
-  );
-
-  // Render tasks
-  if (checklists.tasks.length === 0) {
-    tasksList.innerHTML = '<li class="text-gray-400">No tasks yet.</li>';
-  } else {
-    checklists.tasks.slice(-3).forEach((task) => {
-      const li = document.createElement("li");
-      li.className = "flex items-center gap-2";
-      li.innerHTML = `
-        <input type="checkbox" disabled ${task.completed ? "checked" : ""} />
-        <span class="${task.completed ? "line-through text-gray-400" : ""}">
-          ${task.text}
-        </span>
-      `;
-      tasksList.appendChild(li);
-    });
-  }
-
-  // Render self care
-  if (checklists.care.length === 0) {
-    careList.innerHTML =
-      '<li class="text-gray-400">No self care items yet.</li>';
-  } else {
-    checklists.care.slice(-3).forEach((item) => {
-      const li = document.createElement("li");
-      li.className = "flex items-center gap-2";
-      li.innerHTML = `
-        <input type="checkbox" disabled ${item.completed ? "checked" : ""} />
-        <span class="${item.completed ? "line-through text-gray-400" : ""}">
-          ${item.text}
-        </span>
-      `;
-      careList.appendChild(li);
-    });
-  }
-}
-
-// Main function to load and display all data
-function renderDashboard() {
-  // renderTasksSnapshot();
-  renderJournalSnapshot();
-  renderHabitSnapshot();
-  renderNotesSnapshot();
-}
-console.log("Entries:", localStorage.getItem("entries"));
-// Render the journal entries
-function renderJournalSnapshot() {
-  const journalList = document.getElementById("journal-list");
-  journalList.innerHTML = ""; // Clear previous content
-
-  // The key 'entries' must match how you saved the data
-  const entries = JSON.parse(localStorage.getItem("entries") || "[]");
-
-  if (entries.length === 0) {
-    journalList.innerHTML =
-      '<li class="text-gray-400">No journal entries yet.</li>';
-    return;
-  }
-
-  // Display only the latest entries
-  const latestEntries = entries.slice(-3).reverse();
-  latestEntries.forEach((entry) => {
-    const li = document.createElement("li");
-    li.className = "border-b border-gray-200 pb-2 last:border-b-0 last:pb-0";
-    const date = entry.date || "No date";
-    const content = entry.journalText || "No content";
-
-    li.textContent = `${date}: ${content.substring(0, 50)}...`;
-    journalList.appendChild(li);
-    // li.textContent = `${entry.date}: ${entry.content.substring(0, 50)}...`;
-    // journalList.appendChild(li);
-  });
-}
-console.log("Habits:", localStorage.getItem("habitList"));
-// Render the habit tracker
-function renderHabitSnapshot() {
-  const habitsList = document.getElementById("habits-list");
-  habitsList.innerHTML = "";
-
-  // The key 'habits' must match how you saved the data
-  const habits = JSON.parse(localStorage.getItem("habitList") || "[]");
-
-  if (habits.length === 0) {
-    habitsList.innerHTML =
-      '<li class="text-gray-400">No habits added yet.</li>';
-    return;
-  }
-
-  habits.forEach((habit) => {
-    const li = document.createElement("li");
-    li.className = "border-b border-gray-200 pb-2 last:border-b-0 last:pb-0";
-    
-    li.innerHTML = `<span class="font-medium">✅ ${habit}</span>`;
-    habitsList.appendChild(li);
-  });
-}
-console.log("All Lists:", localStorage.getItem("allLists"));
-// Render the notes/lists
-function renderNotesSnapshot() {
-  const notesList = document.getElementById("notes-list");
-  notesList.innerHTML = "";
-
-  // The key 'allLists' must match how you saved the data
-  const notes = JSON.parse(localStorage.getItem("allLists") || "[]");
-
-  if (notes.length === 0) {
-    notesList.innerHTML =
-      '<li class="text-gray-400">No notes or lists yet.</li>';
-    return;
-  }
-
-  // Display a maximum of 3 notes
-  const latestNotes = notes.slice(-3).reverse();
-  latestNotes.forEach((note) => {
-    const li = document.createElement("li");
-    li.className = "border-b border-gray-200 pb-2 last:border-b-0 last:pb-0";
-    const title = note.name || "Untitled";
-    const itemsPreview = note.items && note.items.length > 0
-      ? note.items.slice(0, 3).join(", ") // show up to 3 items
-      : "No items";
-    
-    li.textContent = `${title}: ${itemsPreview}`;
-    notesList.appendChild(li);
-  });
-}
 
 // Function to handle quick-add buttons (e.g., redirect to relevant page)
 function addNewEntry(type) {
-  alert(`Redirecting to the "${type}" entry page.`);
-  window.location.href = `/${type}.html`;
+    alert(`Redirecting to the "${type}" entry page.`);
+    window.location.href = `/${type}.html`;
 }

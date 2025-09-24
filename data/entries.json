@@ -3,5 +3,10 @@
     "date": "2025-09-23",
     "mood": "angry",
     "journalText": "Very irritable today!"
+  },
+  {
+    "date": "2025-09-10",
+    "mood": "excited",
+    "journalText": "It's my Bday! I turn 43!"
   }
 ]

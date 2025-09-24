@@ -6,6 +6,14 @@
       {
         "text": "Garbage Bags",
         "completed": false
+      },
+      {
+        "text": "Conditioner",
+        "completed": false
+      },
+      {
+        "text": "Candles",
+        "completed": false
       }
     ]
   },
@@ -14,6 +22,16 @@
     "type": "notes",
     "items": [
       "Gardening App"
+    ]
+  },
+  {
+    "name": "TODO",
+    "type": "checklist",
+    "items": [
+      {
+        "text": "Litter box",
+        "completed": false
+      }
     ]
   }
 ]
