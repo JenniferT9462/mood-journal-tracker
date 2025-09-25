@@ -89,37 +89,54 @@ function createChecklistItem(listElement, itemText, isCompleted = false) {
   });
 
   // Attach edit handler
-  editBtn.addEventListener("click", () => {
-    const newText = prompt("Edit item:", span.textContent);
-    if (newText !== null && newText.trim() !== "") {
-      span.textContent = newText.trim();
-      saveLists();
-    }
-  });
+  // editBtn.addEventListener("click", () => {
+  //   const newText = prompt("Edit item:", span.textContent);
+  //   if (newText !== null && newText.trim() !== "") {
+  //     span.textContent = newText.trim();
+  //     saveLists();
+  //   }
+  // });
 
   listElement.appendChild(li);
 }
-
-// *** UPDATED createNote FUNCTION ***
 function createNote(listElement, noteText = "") {
   listElement.innerHTML = `
-    <div class="p-3 bg-white/20 rounded-lg shadow-md hover:bg-white/30 transition min-h-[150px] flex flex-col items-center justify-center relative">
-        <p class="text-white text-base leading-relaxed whitespace-pre-wrap overflow-y-auto w-full h-full flex-1" style="word-break: break-word;">${noteText}</p>
-        <button class="editNoteBtn absolute bottom-2 right-2 bg-yellow-400 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded-full text-sm">✏️</button>
+    <div class="p-3 bg-white/20 rounded-lg shadow-md min-h-[150px] flex flex-col relative">
+      <p class="note-content text-white whitespace-pre-wrap flex-1 overflow-y-auto">${noteText}</p>
+      <button class="editNoteBtn absolute bottom-2 right-2 bg-yellow-400 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded-full text-sm">✏️</button>
     </div>
   `;
 
-  const p = listElement.querySelector("p");
+  const p = listElement.querySelector(".note-content");
   const editNoteBtn = listElement.querySelector(".editNoteBtn");
 
   editNoteBtn.addEventListener("click", () => {
-    const newText = prompt("Edit note:", p.textContent);
-    if (newText !== null) {
-      p.textContent = newText;
-      saveLists();
-    }
+    // Populate modal with current text
+    document.getElementById("editNoteTextarea").value = p.textContent;
+
+    // Show modal
+    document.getElementById("editNoteModal").classList.remove("hidden");
+
+    // Save handler
+    document.getElementById("saveEditNote").onclick = () => {
+      const updatedText = document.getElementById("editNoteTextarea").value.trim();
+      if (updatedText) {
+        p.textContent = updatedText;
+        saveLists();
+      }
+      closeEditNoteModal();
+    };
+
+    // Cancel handler
+    document.getElementById("cancelEditNote").onclick = closeEditNoteModal;
   });
 }
+
+function closeEditNoteModal() {
+  document.getElementById("editNoteModal").classList.add("hidden");
+}
+
+
 
 
 // --- API Functions ---
@@ -237,6 +254,7 @@ function renderNewList(
     });
   } else if (listType === "notes") {
     createNote(ul, items[0] || "");
+    // col.querySelector(".addItem")?.remove();
   }
 
   // Attach delete list handler
