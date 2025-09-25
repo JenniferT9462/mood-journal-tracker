@@ -5,12 +5,12 @@
     "items": [
       {
         "text": "Sweep",
-        "completed": true,
+        "completed": false,
         "isDefault": false
       },
       {
         "text": "Dishes",
-        "completed": true,
+        "completed": false,
         "isDefault": false
       },
       {
@@ -30,7 +30,7 @@
       },
       {
         "text": "Trash",
-        "completed": true,
+        "completed": false,
         "isDefault": false
       },
       {
@@ -67,6 +67,11 @@
       {
         "text": "Yoga",
         "completed": false,
+        "isDefault": false
+      },
+      {
+        "text": "Meds",
+        "completed": true,
         "isDefault": false
       }
     ]

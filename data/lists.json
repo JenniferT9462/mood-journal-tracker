@@ -21,7 +21,7 @@
     "name": "Project Ideas",
     "type": "notes",
     "items": [
-      "Gardening App"
+      "Gardening App - Convert to storage on my machine"
     ]
   },
   {
@@ -30,6 +30,34 @@
     "items": [
       {
         "text": "Litter box",
+        "completed": false
+      },
+      {
+        "text": "Laundry",
+        "completed": false
+      },
+      {
+        "text": "Pictures $20",
+        "completed": false
+      },
+      {
+        "text": "Clean up outside",
+        "completed": false
+      },
+      {
+        "text": "Clean under bed",
+        "completed": false
+      },
+      {
+        "text": "Job Hunt",
+        "completed": false
+      },
+      {
+        "text": "Udemy or Grow w/ Google",
+        "completed": false
+      },
+      {
+        "text": "New Certification",
         "completed": false
       }
     ]
