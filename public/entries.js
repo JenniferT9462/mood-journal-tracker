@@ -10,12 +10,7 @@ const MOOD_EMOJIS = {
 
 const container = document.getElementById("entries-container");
 
-// Load entries
-const entries = JSON.parse(localStorage.getItem("entries")) || [];
-async function loadEntries() {
-  const res = await fetch("/api/journal");
-  return await res.json();
-}
+
 
 // Modal elements
 const editModal = document.getElementById("editModal");
@@ -25,9 +20,20 @@ const editText = document.getElementById("editText");
 const saveEdit = document.getElementById("saveEdit");
 const cancelEdit = document.getElementById("cancelEdit");
 
+let entries = [];
 let editIndex = null; // which entry we’re editing
 let selectedMood = null;
 
+// Load entries
+async function loadEntries() {
+  try {
+    const res = await fetch("/api/entries");   // ✅ correct endpoint
+    entries = await res.json();
+    renderEntries();                           // ✅ actually displays them
+  } catch (err) {
+    console.error("Error loading entries:", err);
+  }
+}
 function renderEntries() {
   container.innerHTML = "";
 
@@ -103,19 +109,21 @@ Array.from(editMoodOptions.children).forEach((img) => {
   });
 });
 
-saveEdit.addEventListener("click", () => {
+saveEdit.addEventListener("click", async () => {
   if (editIndex !== null) {
-    const updatedDate = editDate.value.trim() || entries[editIndex].date;
-
-    const updatedText = editText.value.trim() || entries[editIndex].journalText;
-
-    entries[editIndex] = {
-      date: updatedDate,
+    const updated = {
+      date: editDate.value.trim() || entries[editIndex].date,
       mood: selectedMood,
-      journalText: updatedText,
+      journalText: editText.value.trim() || entries[editIndex].journalText,
     };
 
-    saveEntries();
+    await fetch(`/api/entries/${entries[editIndex].date}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updated),
+    });
+
+    await loadEntries();
   }
   closeEditModal();
 });
@@ -127,19 +135,16 @@ function closeEditModal() {
   editModal.classList.add("hidden");
 }
 
-function deleteEntry(index) {
+async function deleteEntry(index) {
   if (confirm("Are you sure you want to delete this entry?")) {
-    entries.splice(index, 1);
-    saveEntries();
+    await fetch(`/api/entries/${entries[index].date}`, { method: "DELETE" });
+    await loadEntries();
   }
 }
 
-function saveEntries() {
-  localStorage.setItem("entries", JSON.stringify(entries));
-  renderEntries();
-}
 
-renderEntries();
+
+// renderEntries();
 
 // Sidebar toggle for mobile
 const menuBtn = document.getElementById("menu-btn");
@@ -149,3 +154,6 @@ if (menuBtn && sidebar) {
     sidebar.classList.toggle("-translate-x-full");
   });
 }
+
+// Initial load
+loadEntries();
