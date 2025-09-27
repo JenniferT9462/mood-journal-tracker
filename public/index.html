@@ -4,19 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="daily.css">
-    
+    <link rel="stylesheet" href="daily.css" />
   </head>
   <body class="bg-gray-100 font-sans p-6 md:p-10 flex justify-center">
-    <div class="bg-transparent rounded-xl shadow-lg w-full max-w-4xl p-6 md:p-8">
+    <div
+      class="bg-transparent rounded-xl shadow-lg w-full max-w-4xl p-6 md:p-8"
+    >
       <header class="mb-6">
         <h1 id="welcome-message" class="text-3xl font-bold text-blue-400 mb-1">
           Hello, User! 👋
         </h1>
         <p class="text-gray-400">Here's a quick look at your day.</p>
       </header>
+
+      <div id="randomGoalSection" class="w-full max-w-2xl mx-auto mb-8 mt-6">
+        <div
+          class="bg-yellow-100 p-6 rounded-xl shadow-2xl border-l-8 border-yellow-500 text-center"
+        >
+          <h3 class="text-xl font-semibold text-yellow-800 mb-3">
+            💡 Your Random Daily Goal
+          </h3>
+          <p
+            id="dailyGoalText"
+            class="text-2xl font-bold text-yellow-900 italic"
+          >
+            Tap to reveal your mission!
+          </p>
+        </div>
+      </div>
 
       <section class="quick-add mb-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-3">Quick Actions</h2>
@@ -69,8 +86,7 @@
                 Add
               </button>
             </div>
-            <ul id="checklist" class="space-y-2">
-                          </ul>
+            <ul id="checklist" class="space-y-2"></ul>
           </div>
 
           <div class="bg-white rounded-lg shadow p-4">
@@ -89,8 +105,7 @@
                 Add
               </button>
             </div>
-            <ul id="careChecklist" class="space-y-2">
-                          </ul>
+            <ul id="careChecklist" class="space-y-2"></ul>
           </div>
         </div>
       </section>
@@ -138,5 +153,6 @@
 
     <script src="daily-v2.js"></script>
     <script src="script.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
