@@ -206,7 +206,7 @@ function renderNewList(
   shouldSave = true
 ) {
   const col = document.createElement("div");
-  col.className = "w-full sm:w-[calc(50%-1.5rem)] md:w-[calc(33.333%-1.5rem)]";
+  col.className = "px-3 py-3";
   col.dataset.custom = "true";
   col.dataset.type = listType;
 

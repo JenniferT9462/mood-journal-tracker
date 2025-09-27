@@ -1,21 +1,23 @@
 {
   "name": "mood-journal-app",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.cjs",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "electron .",
     "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
-  "description": "",
+  
   "dependencies": {
     "express": "^5.1.0"
   },
   "devDependencies": {
+    "electron": "^38.1.2",
     "nodemon": "^3.1.10"
-  }
+  },
+  "description": ""
 }

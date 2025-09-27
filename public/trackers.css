@@ -30,41 +30,64 @@ header {
 }
 
 
-/* The side navigation menu */
 .sidebar {
-  position: fixed;
-  top: 0;           /* <-- ensure it sits flush with the top */
-  left: 0;
-  width: 75px;
-  height: 100vh;    /* full viewport height */
+  /* Common styles for all screen sizes */
   margin: 0;
   padding: 0;
+  width: 60px; /* Updated width */
   background-color: #f1f1f1;
-  z-index: 9999;    /* keep it above other stuff */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  background-color: rgba(0, 0, 0, 0.2);
+  overflow: auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.4); /* Darker backdrop blur */
   backdrop-filter: blur(8px);
   border-radius: 1rem;
+  display: flex; /* Makes the sidebar a flex container */
+  flex-direction: column; /* Stacks icons vertically */
+
+  align-items: center;
 }
 
+/* On medium screens and up, the sidebar is not transformed and the body has a margin to the left */
+@media (min-width: 768px) {
+  .sidebar {
+    transform: none !important;
+  }
+}
 /* Sidebar links */
+/* Sidebar links (Base Styles) */
 .sidebar a {
-  display: block;
-  color: black;
-  padding: 16px;
+  height: 60px;
+  width: 60px;
   text-decoration: none;
+  transition: all 0.2s ease-in-out; 
+  background-color: transparent; 
+  border-radius: 0.5rem; 
+  color: #fff; 
+  position: relative; 
+  z-index: 20; 
 }
 
-/* Active/current link */
+
+
+/* Links on mouse-over - Glow effect */
+.sidebar a:hover {
+  background-color: rgba(107, 33, 168, 0.4) !important; /* Slightly more background fill */
+  /* Use a bright, contrasting color and higher opacity (0.9) */
+  box-shadow: 0 0 8px 2px rgba(223, 136, 226, 0.9) !important; 
+  color: #e1aaea !important; 
+}
+/* Active/current link - Glow effect */
 .sidebar a.active {
-  background-color: #7e22ce;
-  color: white;
+  background-color: rgba(126, 34, 206, 0.6) !important;
+  /* Use the bright color, max opacity (1) and max spread for visual dominance */
+  box-shadow: 0 0 16px 8px rgba(126, 34, 206, 1) !important; 
+  color: #fff !important;
 }
-
-/* Links on mouse-over */
-.sidebar a:hover:not(.active) {
-  background-color: #6b21a8;
-  color: white;
+/* Ensure the active link stays strong even when hovered over */
+.sidebar a.active:hover {
+    background-color: rgba(126, 34, 206, 0.8) !important;
+    box-shadow: 0 0 8px 2px  rgba(223, 136, 226, 0.9) !important; /* White glow for a blinding effect */
 }
 
 /* ====== Calendar ====== */

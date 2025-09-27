@@ -1,11 +1,11 @@
 body {
   margin: 0;
-   min-height: 100vh; 
+  min-height: 100vh;
   font-family: "Inter", sans-serif;
-   background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover; 
-  background: linear-gradient(to bottom right, #3b82f6, #8b5cf6, #14b8a6);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  
 }
 
 /* Added to ensure headers are the correct color */
@@ -20,27 +20,29 @@ header {
   margin-top: 2rem;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
   background-color: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(8px);
   border-radius: 1rem;
-  
 }
 
 .sidebar {
   /* Common styles for all screen sizes */
   margin: 0;
   padding: 0;
-  width: 75px; /* Fixed width for the sidebar */
-  background-color: #f1f1f1;
+  width: 60px; /* Updated width */
+  background-color: #1f2937; 
   overflow: auto;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.4); 
   backdrop-filter: blur(8px);
   border-radius: 1rem;
   display: flex; /* Makes the sidebar a flex container */
   flex-direction: column; /* Stacks icons vertically */
-  align-items: center; /* Centers icons horizontally */
+
+  align-items: center;
 }
 
 /* On medium screens and up, the sidebar is not transformed and the body has a margin to the left */
@@ -50,34 +52,61 @@ header {
   }
 }
 /* Sidebar links */
+/* Sidebar links (Base Styles) */
 .sidebar a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 75px; 
-  width: 75px; 
+  height: 60px;
+  width: 60px;
   text-decoration: none;
-  transition: background-color 0.2s, color 0.2s; 
+  transition: all 0.2s ease-in-out; 
+  background-color: transparent; 
+  border-radius: 0.5rem; 
+  color: #fff !important; 
+  position: relative; 
+  z-index: 20; 
 }
-/* Sidebar links */
-.sidebar a img {
-  width: 40px; /* Adjust as needed */
-  height: 40px; /* Adjust as needed */
-  display: block; /* Ensures the image behaves as a block element */
-  
+.sidebar a span * {
+    color: white !important; 
+}
+.sidebar a span {
+    color: white !important;
 }
 
-/* Active/current link */
+
+
+/* Links on mouse-over - Glow effect */
+.sidebar a:hover {
+  background-color: rgba(107, 33, 168, 0.4) !important; /* Slightly more background fill */
+  /* Use a bright, contrasting color and higher opacity (0.9) */
+  box-shadow: 0 0 8px 2px rgba(223, 136, 226, 0.9) !important; 
+  color: #e1aaea !important; 
+}
+/* Active/current link - Glow effect */
 .sidebar a.active {
-  background-color: #7e22ce;
+  background-color: rgba(126, 34, 206, 0.6) !important;
+  /* Use the bright color, max opacity (1) and max spread for visual dominance */
+  box-shadow: 0 0 16px 8px rgba(126, 34, 206, 1) !important; 
+  color: #fff !important;
+}
+/* Ensure the active link stays strong even when hovered over */
+.sidebar a.active:hover {
+    background-color: rgba(126, 34, 206, 0.8) !important;
+    box-shadow: 0 0 8px 2px  rgba(223, 136, 226, 0.9) !important; /* White glow for a blinding effect */
 }
 
-/* Links on mouse-over */
-.sidebar a:hover:not(.active) {
-  background-color: #6b21a8;
+/* 🛑 CRITICAL FINAL FIX: Force text visibility and display property. */
+.sidebar a span.hidden {
+    display: block !important; /* Forces it to override the 'hidden' utility on desktop */
+    color: white !important;   /* Forces the color to white */
+    width: 60px !important;    /* Forces it to use the full width */
+    text-align: center !important; /* Centers the text */
 }
 
-
+/* This is a safety override for the text label that appears on desktop */
+@media (min-width: 768px) {
+    .sidebar a span.hidden.md\:block {
+        display: block !important;
+    }
+}
 
 .mood-icon {
   width: 60px;

@@ -146,7 +146,7 @@ async function renderTasksSnapshot() {
     // Helper function to render a list item for the dashboard using innerHTML
     function renderItem(item) {
         // The HTML string includes the delete button for non-default items
-        const deleteButtonHtml = item.isDefault ? '' : '<button class="ml-2">❌</button>';
+        const deleteButtonHtml = '<button class="ml-2">❌</button>';
         const completedClass = item.completed ? 'line-through text-gray-400' : '';
 
         return `

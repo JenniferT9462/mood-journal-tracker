@@ -1,79 +1,92 @@
-[
-  {
-    "name": "Daily Tasks",
-    "type": "checklist",
-    "items": [
-      {
-        "text": "Sweep",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Dishes",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Organize",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Litter Box",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Wipe Counters",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Trash",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Make Bed",
-        "completed": false,
-        "isDefault": false
-      }
-    ]
-  },
-  {
-    "name": "Self Care",
-    "type": "checklist",
-    "items": [
-      {
-        "text": "Brush Hair",
-        "completed": true,
-        "isDefault": false
-      },
-      {
-        "text": "Brush Teeth",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Wash Face",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Vitamins",
-        "completed": true,
-        "isDefault": false
-      },
-      {
-        "text": "Yoga",
-        "completed": false,
-        "isDefault": false
-      },
-      {
-        "text": "Meds",
-        "completed": true,
-        "isDefault": false
-      }
-    ]
-  }
-]
+{
+  "lastResetDate": "2025-09-27",
+  "tasks": [
+    {
+      "name": "Daily Tasks",
+      "type": "checklist",
+      "items": [
+        {
+          "text": "Sweep",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Dishes",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Organize",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Litter Box",
+          "completed": false,
+          "isDefault": true
+        },
+        {
+          "text": "Wipe Counters",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Trash",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Make Bed",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Laundry",
+          "completed": false,
+          "isDefault": false
+        }
+      ]
+    },
+    {
+      "name": "Self Care",
+      "type": "checklist",
+      "items": [
+        {
+          "text": "Brush Hair",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Brush Teeth",
+          "completed": false,
+          "isDefault": true
+        },
+        {
+          "text": "Wash Face",
+          "completed": false,
+          "isDefault": true
+        },
+        {
+          "text": "Vitamins",
+          "completed": false,
+          "isDefault": true
+        },
+        {
+          "text": "Yoga",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Meds",
+          "completed": true,
+          "isDefault": true
+        },
+        {
+          "text": "Shower",
+          "completed": false,
+          "isDefault": false
+        }
+      ]
+    }
+  ]
+}
