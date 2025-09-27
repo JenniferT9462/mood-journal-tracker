@@ -12,7 +12,12 @@ const dailyGoals = [
     "Declutter your desktop or phone home screen ✨",
     "Practice deep breathing for 5 minutes 🌬️",
     "Write down three things you are grateful for 🙏",
-    "Clean a mirror or window until it shines ✨"
+    "Clean a mirror or window until it shines ✨",
+    "Knit something 🧶",
+    "Make some art. 🎨",
+    "Work on Household project. 🏡",
+    "Touch Grass. 🌿",
+    
 ];
 
 // 2. Function to select and display a random goal
