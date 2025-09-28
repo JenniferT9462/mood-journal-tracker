@@ -88,14 +88,7 @@ function createChecklistItem(listElement, itemText, isCompleted = false) {
     saveLists();
   });
 
-  // Attach edit handler
-  // editBtn.addEventListener("click", () => {
-  //   const newText = prompt("Edit item:", span.textContent);
-  //   if (newText !== null && newText.trim() !== "") {
-  //     span.textContent = newText.trim();
-  //     saveLists();
-  //   }
-  // });
+
 
   listElement.appendChild(li);
 }
@@ -292,6 +285,13 @@ function attachEventListeners() {
     DOM.addListModal.classList.add("flex", "opacity-100");
     DOM.addListContent.classList.remove("scale-95", "opacity-0");
     DOM.addListContent.classList.add("scale-100", "opacity-100");
+    const listNameInput = document.getElementById("listName");
+    if (listNameInput) {
+        // Use a slight delay to ensure the modal's display change has taken effect
+       DOM.addListContent.focus();
+
+        
+    }
   });
 
   // Close modal
