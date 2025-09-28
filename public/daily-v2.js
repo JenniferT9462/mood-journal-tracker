@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("No task data received from server. Check server logs.");
     }
 
-    await saveData();
+    // await saveData();
   }
 
   init();

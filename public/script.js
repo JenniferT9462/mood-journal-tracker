@@ -127,59 +127,59 @@ async function renderNotesSnapshot() {
     });
 }
 
-async function renderTasksSnapshot() {
-    const tasksList = document.getElementById("checklist");
-    const careList = document.getElementById("careChecklist");
-    if (!tasksList || !careList) {
-        console.warn("Skipping renderTasksSnapshot - elements not found.");
-        return;
-    }
+// async function renderTasksSnapshot() {
+//     const tasksList = document.getElementById("checklist");
+//     const careList = document.getElementById("careChecklist");
+//     if (!tasksList || !careList) {
+//         console.warn("Skipping renderTasksSnapshot - elements not found.");
+//         return;
+//     }
 
-    // Clear existing lists using innerHTML
-    tasksList.innerHTML = "";
-    careList.innerHTML = "";
+//     // Clear existing lists using innerHTML
+//     tasksList.innerHTML = "";
+//     careList.innerHTML = "";
 
-    const allLists = await fetchTasks();
-    const tasks = allLists.find(list => list.name === "Daily Tasks")?.items || [];
-    const care = allLists.find(list => list.name === "Self Care")?.items || [];
+//     const allLists = await fetchTasks();
+//     const tasks = allLists.find(list => list.name === "Daily Tasks")?.items || [];
+//     const care = allLists.find(list => list.name === "Self Care")?.items || [];
 
-    // Helper function to render a list item for the dashboard using innerHTML
-    function renderItem(item) {
-        // The HTML string includes the delete button for non-default items
-        const deleteButtonHtml = '<button class="ml-2">❌</button>';
-        const completedClass = item.completed ? 'line-through text-gray-400' : '';
+//     // Helper function to render a list item for the dashboard using innerHTML
+//     function renderItem(item) {
+//         // The HTML string includes the delete button for non-default items
+//         const deleteButtonHtml = '<button class="ml-2">❌</button>';
+//         const completedClass = item.completed ? 'line-through text-gray-400' : '';
 
-        return `
-            <li class="flex items-center gap-2">
-                <input type="checkbox" ${item.completed ? "checked" : ""}>
-                <span class="${completedClass}">${item.text}</span>
-                ${deleteButtonHtml}
-            </li>
-        `;
-    }
-    // Render tasks
-    if (tasks.length === 0) {
-        tasksList.innerHTML = '<li class="text-gray-400">No tasks yet.</li>';
-    } else {
-        // Render all tasks, not just a slice
-        tasks.forEach(task => tasksList.innerHTML += renderItem(task));
-    }
+//         return `
+//             <li class="flex items-center gap-2">
+//                 <input type="checkbox" ${item.completed ? "checked" : ""}>
+//                 <span class="${completedClass}">${item.text}</span>
+//                 ${deleteButtonHtml}
+//             </li>
+//         `;
+//     }
+//     // Render tasks
+//     if (tasks.length === 0) {
+//         tasksList.innerHTML = '<li class="text-gray-400">No tasks yet.</li>';
+//     } else {
+//         // Render all tasks, not just a slice
+//         tasks.forEach(task => tasksList.innerHTML += renderItem(task));
+//     }
 
-    // Render self care
-    if (care.length === 0) {
-        careList.innerHTML = '<li class="text-gray-400">No self care items yet.</li>';
-    } else {
-        // Render all care items, not just a slice
-        care.forEach(item => careList.innerHTML += renderItem(item));
-    }
+//     // Render self care
+//     if (care.length === 0) {
+//         careList.innerHTML = '<li class="text-gray-400">No self care items yet.</li>';
+//     } else {
+//         // Render all care items, not just a slice
+//         care.forEach(item => careList.innerHTML += renderItem(item));
+//     }
     
-}
+// }
 
 async function renderDashboard() {
     await renderJournalSnapshot();
     await renderHabitSnapshot();
     await renderNotesSnapshot();
-    await renderTasksSnapshot();
+    // await renderTasksSnapshot();
 }
 document.addEventListener("DOMContentLoaded", () => {
     renderDashboard();

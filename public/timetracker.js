@@ -327,7 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadData();
 
     elements.addEntryBtn.addEventListener("click", addEntry);
-
-    window.focus();
+    
   })();
 });
