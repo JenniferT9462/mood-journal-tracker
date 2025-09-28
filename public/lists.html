@@ -29,31 +29,53 @@
       </svg>
     </button>
 
-    <div class="sidebar fixed inset-y-0 left-0 transform -translate-x-full transition-transform ease-in-out duration-300 z-10 md:translate-x-0 md:flex flex-col gap-y-4">
-    <a href="index.html" class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50">
-      <span class="text-2xl mb-1">🏠</span>
-      <span class="hidden md:block">Home</span>
-    </a>
-    <a href="trackers.html" class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50">
-      <span class="text-2xl mb-1">📈</span>
-      <span class="hidden md:block">Trackers</span>
-    </a>
-    <a class="active flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50">
-      <span class="text-2xl mb-1">📋</span>
-      <span class="hidden md:block">Lists</span>
-    </a>
-    <a href="journal.html"  class="flex flex-col items-center justify-center text-xs text-white hover:bg-purple-700/50">
-      <span class="text-2xl mb-1">✍️</span>
-      <span class="hidden md:block">Journal</span>
-    </a>
-    <a href="entries.html" class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50">
-      <span class="text-2xl mb-1">📖</span>
-      <span class="hidden md:block">Entries</span>
+    <div
+      class="sidebar fixed inset-y-0 left-0 transform -translate-x-full transition-transform ease-in-out duration-300 z-10 md:translate-x-0 md:flex flex-col gap-y-4"
+    >
+      <a
+        href="index.html"
+        class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">🏠</span>
+        <span class="hidden md:block">Home</span>
       </a>
-  </div>
-  
+      <a
+        href="trackers.html"
+        class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">📈</span>
+        <span class="hidden md:block">Trackers</span>
+      </a>
+      <a
+        class="active flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">📋</span>
+        <span class="hidden md:block">Lists</span>
+      </a>
+      <a
+        href="journal.html"
+        class="flex flex-col items-center justify-center text-xs text-white hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">✍️</span>
+        <span class="hidden md:block">Journal</span>
+      </a>
+      <a
+        href="entries.html"
+        class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">📖</span>
+        <span class="hidden md:block">Entries</span>
+      </a>
+      <a
+        href="timetracker.html"
+        class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">⏱️</span>
+        <span class="hidden md:block text-white">Time</span>
+      </a>
+    </div>
 
-    <div class="main-content p-5 col-span-full md:col-start-2"> 
+    <div class="main-content p-5 col-span-full md:col-start-2">
       <header
         class="p-6 text-center shadow-lg bg-black/20 backdrop-blur-sm rounded-2xl mb-6"
       >
@@ -71,8 +93,10 @@
       </div>
 
       <main>
-      <div id="listsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 gap-y-8 justify-items-center mx-auto">
-      </div>
+        <div
+          id="listsContainer"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 gap-y-8 justify-items-center mx-auto"
+        ></div>
       </main>
     </div>
 

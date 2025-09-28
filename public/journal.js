@@ -123,11 +123,16 @@ function handleMoodSelection(e) {
 
 async function handleEntrySave(e) {
   e.preventDefault();
-  const journalText = DOM.journalEntry.value;
+  const journalText = DOM.journalEntry.value.trim();
   const selectedDate = DOM.entryDateInput.value;
 
+  console.log(`DEBUG: journalText.length is ${journalText.length}`);
+  console.log(`DEBUG: selectedMood is ${selectedMood}`);
+
   if (!selectedMood) return showModal("Please select a mood before saving.");
-  if (!journalText) return showModal("Please write a journal entry before saving.");
+    // if (!journalText) return showModal("Please write a journal entry before saving.");
+  if (journalText === "") return showModal("Please write a journal entry before saving.");
+
 
   const newEntry = { date: selectedDate, mood: selectedMood, journalText };
   await saveJournalEntry(newEntry);
