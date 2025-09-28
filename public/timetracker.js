@@ -191,6 +191,7 @@ const checkAndArchiveMonth = () => {
         month: currentMonth,
         year: timeTrackerData.archiveYear,
         summary,
+        entries: entries,
       };
 
       archive = [...archive, newArchiveEntry];
@@ -203,6 +204,44 @@ const checkAndArchiveMonth = () => {
     currentMonth = thisMonth;
     timeTrackerData.archiveYear = thisYear;
   }
+};
+
+const archiveOldEntry = (entry) => {
+  const entryDate = new Date(entry.date);
+  const month = entryDate.getMonth();
+  const year = entryDate.getFullYear();
+  const entryTotal = parseFloat(entry.total) || 0;
+  const entryMinutes = entry.minutes || 0;
+  const workType = entry.workType || "Other";
+
+  let monthIndex = archive.findIndex(a => a.month === month && a.year === year);
+
+  if (monthIndex === -1) {
+    const newArchiveEntry = {
+      month: month,
+      year: year,
+      summary: createSummaryFromEntries([]),
+      entries: [],
+    };
+    archive.push(newArchiveEntry);
+    monthIndex = archive.length - 1;
+  }
+  const archivedMonth = archive[monthIndex];
+
+  archivedMonth.entries.push(entry);
+
+  let summary = archivedMonth.summary;
+
+  summary.totalEntries += 1;
+  summary.totalMinutes += entryMinutes;
+  summary.totalPay = (parseFloat(summary.totalPay) + entryTotal).toFixed(2);
+
+  // Update byType stats
+  if (!summary.byType[workType]) {
+    summary.byType[workType] = { minutes: 0, total: 0 };
+  }
+  summary.byType[workType].minutes += entryMinutes;
+  summary.byType[workType].total += entryTotal;
 };
 
 const loadData = async () => {
@@ -249,7 +288,7 @@ const loadData = async () => {
 const addEntry = async () => {
   checkAndArchiveMonth();
 
-  const date = elements.entryDate.value || getLocalISODate();
+  const dateStr = elements.entryDate.value || getLocalISODate();
   const workType = elements.workType.value;
   const minutes = elements.minutesWorked.value;
   const serviceName = elements.flatServiceName.value;
@@ -260,7 +299,7 @@ const addEntry = async () => {
   if (serviceName && flatRate) {
     newEntry = {
       id: Date.now(),
-      date: date,
+      date: dateStr,
       workType: serviceName,
       isFlatRate: true,
       flatRate: parseFloat(flatRate),
@@ -276,7 +315,7 @@ const addEntry = async () => {
 
     newEntry = {
       id: Date.now(),
-      date: date,
+      date: dateStr,
       workType: workType,
       minutes: time,
       payRate: FIXED_PAY_RATE,
@@ -288,10 +327,26 @@ const addEntry = async () => {
     );
     return;
   }
+   // --- End Entry Creation Logic ---
 
-  entries = [newEntry, ...entries];
+   const entryDate = new Date(dateStr);
+   const entryMonth = entryDate.getMonth();
+   const entryYear = entryDate.getFullYear();
+
+   const currentListMonth = currentMonth;
+   const currentListYear = timeTrackerData.archiveYear || new Date().getFullYear();
+
+  if (entryYear < currentListYear || (entryYear === currentListYear && entryMonth < currentListMonth)) {
+    console.log(`Archiving old entry from ${entryDate.toDateString()}`);
+
+    archiveOldEntry(newEntry);
+  } else {
+    entries = [newEntry, ...entries];
+  }
+  
   await updateUI();
 
+   // Reset Form Fields
   elements.entryDate.value = getLocalISODate(); // Resets date to today
   elements.workType.value = "";
   elements.minutesWorked.value = "";
