@@ -310,6 +310,36 @@ app.post("/api/timetracker", (req, res) => {
   }
 });
 
+// ====== Gratitude & Affirmations ======
+// GET all mindful data (Gratitude History and Custom Affirmations)
+app.get("/api/mindful", (req, res) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(FILE_NAMES.MINDFUL, "utf8"));
+        res.json(data);
+    } catch (err) {
+        console.error("Error reading mindful data file:", err);
+        // Return a default structure on read error
+        res.json({ gratitudeHistory: [], customAffirmations: [] });
+    }
+});
+
+// Save all mindful data (replaces existing content)
+app.post("/api/mindful", (req, res) => {
+    try {
+        // The request body should contain the full mindful data object:
+        // { gratitudeHistory: [...], customAffirmations: [...] }
+        fs.writeFileSync(
+            FILE_NAMES.MINDFUL,
+            JSON.stringify(req.body, null, 2)
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Error writing to mindful data file:", err);
+        res.status(500).send("Error writing to mindful data file.");
+    }
+});
+
+
 // --- Server Start ---
 
 module.exports.start = (callback) => {
