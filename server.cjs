@@ -5,52 +5,34 @@ const app = express();
 
 const PORT = 3000;
 
-// Global file name constants (used only for naming)
+const DATA_FILE = path.join("data", "entries.json");
+const HABIT_FILE = path.join("data", "habitData.json");
+const LIST_FILE = path.join("data", "lists.json");
+const TASKS_FILE = path.join("data", "dailyTasks.json");
+const TIME_FILE = path.join("data", "timetracker.json");
+
+
+
 const FILE_NAMES = {
-    ENTRIES: "data/entries.json",
-    HABITS: "data/habitData.json",
-    LISTS: "data/lists.json",
-    TASKS: "data/dailyTasks.json",
-    TIME_TRACKER: "data/timetracker.json"
+    ENTRIES: DATA_FILE,
+    HABITS: HABIT_FILE,
+    LISTS: LIST_FILE,
+    TASKS: TASKS_FILE,
+    TIME_TRACKER: TIME_FILE // Corrected from TIME_FILE
 };
 
-// --- Initialization Functions (Reverted to simple in-app setup) ---
-
-const ensureDataFiles = () => {
-    // This is the simplest working method: create the 'data' directory if it doesn't exist
-    const dataDir = path.join(__dirname, 'data');
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-        console.log("Data directory created locally.");
-    }
-
-    const initialTimeTrackerData = {
-        currentEntries: [],
-        archivedMonths: [],
-        lastMonthChecked: new Date().getMonth().toString(),
-        archiveYear: new Date().getFullYear(),
-    };
-
-    const files = {
-        [FILE_NAMES.ENTRIES]: "[]",
-        [FILE_NAMES.HABITS]: "[]",
-        [FILE_NAMES.LISTS]: "[]",
-        [FILE_NAMES.TASKS]: "{}", // TASKS uses an object {}
-        [FILE_NAMES.TIME_TRACKER]: JSON.stringify(initialTimeTrackerData),
-    };
-
-    Object.entries(files).forEach(([fileName, defaultContent]) => {
-        if (!fs.existsSync(fileName)) {
-            fs.writeFileSync(fileName, defaultContent, 'utf8');
-            console.log(`Created new data file: ${fileName}`);
-        }
-    });
-};
+function ensureDataFiles() {
+    if (!fs.existsSync("data")) fs.mkdirSync("data");
+    if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, "[]");
+    if (!fs.existsSync(HABIT_FILE)) fs.writeFileSync(HABIT_FILE, "[]");
+    if (!fs.existsSync(LIST_FILE)) fs.writeFileSync(LIST_FILE, "[]");
+    if (!fs.existsSync(TASKS_FILE)) fs.writeFileSync(TASKS_FILE, "{}");
+    if (!fs.existsSync(TIME_FILE)) fs.writeFileSync(TIME_FILE, "{}");
+}
 
 // --- Middleware ---
-
 app.use(express.json());
-app.use(express.static("public")); 
+app.use(express.static("public"));
 
 // --- API Routes ---
 
@@ -65,7 +47,7 @@ app.get("/api/entries", (req, res) => {
     res.json(data);
   } catch (err) {
     console.error(`Error loading/parsing data from: ${filePath}`, err);
-    res.json([]); 
+    res.json([]);
   }
 });
 
@@ -123,7 +105,7 @@ app.get("/api/habits", (req, res) => {
     res.json(data);
   } catch (err) {
     console.error("Error reading habits file:", err);
-    res.json([]); 
+    res.json([]);
   }
 });
 
@@ -163,7 +145,7 @@ app.get("/api/lists", (req, res) => {
     res.json(data);
   } catch (err) {
     console.error(err);
-    res.json([]); 
+    res.json([]);
   }
 });
 
@@ -211,86 +193,83 @@ function getDefaultTasks() {
   ];
 }
 
-// GET all tasks 
+// GET all tasks
 app.get("/api/tasks", (req, res) => {
   try {
     const fileContent = fs.readFileSync(FILE_NAMES.TASKS, "utf8");
     let savedData;
     try {
-        savedData = JSON.parse(fileContent);
+      savedData = JSON.parse(fileContent);
     } catch (e) {
-      savedData = {}; 
+      savedData = {};
     }
 
     const today = getTodayDate();
     let tasksToReturn = [];
-    
+
     if (!savedData.lastResetDate || savedData.lastResetDate !== today) {
-        console.log("New day detected or no date stamp. Resetting tasks...");
-    
-        const userAddedTasksByList = {
-            "Daily Tasks": [],
-            "Self Care": []
-        };
-        if (savedData.tasks) {
-            savedData.tasks.forEach(list => {
-                const nonDefaultItems = list.items.filter(item => !item.isDefault);
-                const resetItems = nonDefaultItems.map(item => ({ 
-                    ...item, 
-                    completed: false 
-                }));
-                if (userAddedTasksByList[list.name]) {
-                    userAddedTasksByList[list.name].push(...resetItems);
-                }
-            });
+      console.log("New day detected or no date stamp. Resetting tasks...");
+
+      const userAddedTasksByList = {
+        "Daily Tasks": [],
+        "Self Care": [],
+      };
+      if (savedData.tasks) {
+        savedData.tasks.forEach((list) => {
+          const nonDefaultItems = list.items.filter((item) => !item.isDefault);
+          const resetItems = nonDefaultItems.map((item) => ({
+            ...item,
+            completed: false,
+          }));
+          if (userAddedTasksByList[list.name]) {
+            userAddedTasksByList[list.name].push(...resetItems);
+          }
+        });
+      }
+      let defaults = getDefaultTasks();
+
+      defaults.forEach((list) => {
+        const tasksToAppend = userAddedTasksByList[list.name];
+        if (tasksToAppend && tasksToAppend.length > 0) {
+          list.items.push(...tasksToAppend);
         }
-        let defaults = getDefaultTasks();
+      });
 
-        defaults.forEach(list => {
-            const tasksToAppend = userAddedTasksByList[list.name];
-            if (tasksToAppend && tasksToAppend.length > 0) {
-                list.items.push(...tasksToAppend);
-            }
-        })
-        
-        tasksToReturn = defaults;
-        const newSaveData = {
-            lastResetDate: today,
-            tasks: tasksToReturn
-        };
+      tasksToReturn = defaults;
+      const newSaveData = {
+        lastResetDate: today,
+        tasks: tasksToReturn,
+      };
 
-        // 5. Save the new, reset list
-        fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(newSaveData, null, 2));
-
-
+      // 5. Save the new, reset list
+      fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(newSaveData, null, 2));
     } else {
-        tasksToReturn = savedData.tasks;
+      tasksToReturn = savedData.tasks;
     }
     res.json(tasksToReturn);
-
   } catch (err) {
-        console.error("Error reading tasks file, loading defaults:", err);
-        const defaults = getDefaultTasks();
-        const initialData = { lastResetDate: getTodayDate(), tasks: defaults };
-        fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(initialData, null, 2));
-        res.json(defaults);
-    }
+    console.error("Error reading tasks file, loading defaults:", err);
+    const defaults = getDefaultTasks();
+    const initialData = { lastResetDate: getTodayDate(), tasks: defaults };
+    fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(initialData, null, 2));
+    res.json(defaults);
+  }
 });
 
 // Save all tasks (replaces existing tasks) (No change needed here)
 app.post("/api/tasks", (req, res) => {
-    try {
-        const dataToSave = {
-            lastResetDate: getTodayDate(), // Update the timestamp on every save
-            tasks: req.body // req.body is the array of lists from the frontend
-        };
+  try {
+    const dataToSave = {
+      lastResetDate: getTodayDate(), // Update the timestamp on every save
+      tasks: req.body, // req.body is the array of lists from the frontend
+    };
 
-        fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(dataToSave, null, 2));
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Error writing to tasks file:", err);
-        res.status(500).send("Error writing to tasks file.");
-    }
+    fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(dataToSave, null, 2));
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error writing to tasks file:", err);
+    res.status(500).send("Error writing to tasks file.");
+  }
 });
 
 //====== Time Tracker Routes ======
@@ -303,11 +282,11 @@ app.get("/api/timetracker", (req, res) => {
   } catch (err) {
     console.error("Error reading time tracker file:", err);
     // Return a default structure on read error
-    const defaultData = { 
-        currentEntries: [], 
-        archivedMonths: [], 
-        lastMonthChecked: new Date().getMonth().toString(),
-        archiveYear: new Date().getFullYear(),
+    const defaultData = {
+      currentEntries: [],
+      archivedMonths: [],
+      lastMonthChecked: new Date().getMonth().toString(),
+      archiveYear: new Date().getFullYear(),
     };
     res.json(defaultData);
   }
@@ -317,7 +296,10 @@ app.get("/api/timetracker", (req, res) => {
 app.post("/api/timetracker", (req, res) => {
   try {
     // The request body should contain the full timeTrackerData object
-    fs.writeFileSync(FILE_NAMES.TIME_TRACKER, JSON.stringify(req.body, null, 2));
+    fs.writeFileSync(
+      FILE_NAMES.TIME_TRACKER,
+      JSON.stringify(req.body, null, 2)
+    );
     res.json({ success: true });
   } catch (err) {
     console.error("Error writing to time tracker file:", err);
@@ -325,21 +307,25 @@ app.post("/api/timetracker", (req, res) => {
   }
 });
 
-
 // --- Server Start ---
-// ... All your API routes (app.get, app.post, etc.) end here ...
-
-// --- Server Start ---
-
 
 module.exports.start = (callback) => {
-    console.log("--- SERVER INITIALIZATION ---");
-    
-    // NOTE: This calls the ensureDataFiles function defined earlier in the file
-    ensureDataFiles(); 
-    console.log("All data files ensured. Starting server...");
+  console.log("--- SERVER INITIALIZATION ---");
 
-    // 4. Start the Express server
-    // FIX: Uses the constant PORT and binds explicitly to localhost
-    return app.listen(PORT, '127.0.0.1', callback);
-};
+  // NOTE: This calls the ensureDataFiles function defined earlier in the file
+  ensureDataFiles();
+  console.log("All data files ensured. Starting server...");
+
+  // 4. Start the Express server
+  // FIX: Uses the constant PORT and binds explicitly to localhost
+  return app.listen(PORT, "127.0.0.1", callback);
+}; // <--- The function definition ends here with the closing brace.
+
+// 💡 NEW CODE BLOCK: Checks if the file is being run directly.
+// This block must be OUTSIDE of the 'module.exports.start' function.
+if (require.main === module) {
+    // If run directly, execute the start function.
+    module.exports.start(() => {
+        console.log(`Server is now listening at http://localhost:${PORT}`);
+    });
+}
