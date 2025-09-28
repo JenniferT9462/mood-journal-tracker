@@ -73,6 +73,13 @@
         <span class="text-2xl mb-1">⏱️</span>
         <span class="hidden md:block text-white">Time</span>
       </a>
+        <a
+        href="gratAff.html"
+        class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
+      >
+        <span class="text-2xl mb-1">💕</span>
+        <span class="hidden md:block text-white">Mindful</span>
+      </a>
     </div>
 
     <div class="main-content p-5 col-span-full md:col-start-2">
@@ -111,6 +118,13 @@
         <h3 class="text-2xl font-bold mb-4 text-center">
           Create a New List 📝
         </h3>
+        <div 
+    id="addListContent" 
+    class="relative transform transition-all ..." 
+    tabindex="-1"  
+    aria-modal="true" 
+    role="dialog"
+>
         <form id="newListForm" class="space-y-4">
           <div>
             <label for="listName" class="block text-sm font-medium"
@@ -164,6 +178,7 @@
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
 
