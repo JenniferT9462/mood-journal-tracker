@@ -21,7 +21,7 @@
       },
       {
         "text": "Bottled Water",
-        "completed": false
+        "completed": true
       }
     ]
   },
@@ -76,6 +76,13 @@
         "text": "Compare logged hours to app",
         "completed": true
       }
+    ]
+  },
+  {
+    "name": "Household Projects",
+    "type": "notes",
+    "items": [
+      "Outside Cleanup\n- Laundry room"
     ]
   }
 ]

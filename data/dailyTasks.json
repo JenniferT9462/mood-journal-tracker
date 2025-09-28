@@ -1,5 +1,5 @@
 {
-  "lastResetDate": "2025-09-27",
+  "lastResetDate": "2025-09-28",
   "tasks": [
     {
       "name": "Daily Tasks",
@@ -37,7 +37,7 @@
         },
         {
           "text": "Make Bed",
-          "completed": true,
+          "completed": false,
           "isDefault": true
         },
         {
