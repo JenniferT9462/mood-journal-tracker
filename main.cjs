@@ -1,47 +1,53 @@
-// main.js
+const { app, BrowserWindow } = require("electron");
+const path = require("path");
+const server = require("./server.cjs");
+const port = 3000;
 
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
-
-// 1. Start your Express server
-// Assuming your Express entry file is in the root and named 'server.js'
-// Adjust the path below if your server file is named differently or is in a subdirectory.
-const server = require('./server.cjs'); // or require('./app')
-const port = 3000; // Use a specific port for the internal server
+app.disableHardwareAcceleration();
 
 let mainWindow;
 
-// MODIFIED main file (main.js or main.cjs)
-// Example of your main file (main.js or main.cjs)
 function createWindow() {
-  const mainWindow = new BrowserWindow({
-    // ... window settings ...
+  mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    focusable: true,
     webPreferences: {
-      // KEEP nodeIntegration: true, contextIsolation: false, webSecurity: false 
-      // for now until the app is working correctly.
-    }
+      nodeIntegration: true,
+      contextIsolation: false,
+      backgroundThrottling: false,
+      webSecurity: false, // Optional, but sometimes helps with localhost issues
+      offscreen: false,
+    },
   });
 
-  // 🛑 CRITICAL FIX: Load the URL served by Express, not the local file path.
-  mainWindow.loadURL('http://localhost:3000'); 
-  
-  mainWindow.webContents.openDevTools(); 
+  mainWindow.loadURL(`http://localhost:${port}/`);
+
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.show();
+  });
+
+ 
+
+  mainWindow.on("restore", () => {
+    mainWindow.focus();
+    mainWindow.webContents.focus();
+  });
+
+
 }
 
-// This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
-    // Start Express and then create the window when it's ready
-    server.listen(port, () => {
-        console.log(`Express server running on port ${port}`);
-        createWindow();
-    });
+  server.start(() => {
+    console.log("Server started");
+    createWindow();
+  });
 
-  app.on('activate', function () {
+  app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", function () {
+  if (process.platform !== "darwin") app.quit();
 });
