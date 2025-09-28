@@ -10,6 +10,7 @@ const HABIT_FILE = path.join("data", "habitData.json");
 const LIST_FILE = path.join("data", "lists.json");
 const TASKS_FILE = path.join("data", "dailyTasks.json");
 const TIME_FILE = path.join("data", "timetracker.json");
+const MINDFUL_FILE = path.join("data", "mindfulData.json");
 
 
 
@@ -18,7 +19,8 @@ const FILE_NAMES = {
     HABITS: HABIT_FILE,
     LISTS: LIST_FILE,
     TASKS: TASKS_FILE,
-    TIME_TRACKER: TIME_FILE // Corrected from TIME_FILE
+    TIME_TRACKER: TIME_FILE,
+    MINDFUL: MINDFUL_FILE,
 };
 
 function ensureDataFiles() {
@@ -28,6 +30,7 @@ function ensureDataFiles() {
     if (!fs.existsSync(LIST_FILE)) fs.writeFileSync(LIST_FILE, "[]");
     if (!fs.existsSync(TASKS_FILE)) fs.writeFileSync(TASKS_FILE, "{}");
     if (!fs.existsSync(TIME_FILE)) fs.writeFileSync(TIME_FILE, "{}");
+    if (!fs.existsSync(MINDFUL_FILE)) fs.writeFileSync(MINDFUL_FILE, '{"gratitudeHistory": [], "customAffirmations": []}');
 }
 
 // --- Middleware ---
