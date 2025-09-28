@@ -16,7 +16,7 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "electron": "^38.1.2",
+    "electron": "^35.0.0",
     "nodemon": "^3.1.10"
   },
   "description": ""
