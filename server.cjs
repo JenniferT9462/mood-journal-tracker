@@ -33,9 +33,12 @@ function ensureDataFiles() {
     if (!fs.existsSync(MINDFUL_FILE)) fs.writeFileSync(MINDFUL_FILE, '{"gratitudeHistory": [], "customAffirmations": []}');
 }
 
+ensureDataFiles();
+
 // --- Middleware ---
 app.use(express.json());
-app.use(express.static("public"));
+// app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public"))); 
 
 // --- API Routes ---
 
@@ -343,22 +346,7 @@ app.post("/api/mindful", (req, res) => {
 // --- Server Start ---
 
 module.exports.start = (callback) => {
-  console.log("--- SERVER INITIALIZATION ---");
-
-  // NOTE: This calls the ensureDataFiles function defined earlier in the file
-  ensureDataFiles();
-  console.log("All data files ensured. Starting server...");
-
-  // 4. Start the Express server
-  // FIX: Uses the constant PORT and binds explicitly to localhost
+  // Ensure data files, start server
   return app.listen(PORT, "127.0.0.1", callback);
-}; // <--- The function definition ends here with the closing brace.
+};
 
-// 💡 NEW CODE BLOCK: Checks if the file is being run directly.
-// This block must be OUTSIDE of the 'module.exports.start' function.
-if (require.main === module) {
-    // If run directly, execute the start function.
-    module.exports.start(() => {
-        console.log(`Server is now listening at http://localhost:${PORT}`);
-    });
-}
