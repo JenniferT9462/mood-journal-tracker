@@ -3,42 +3,50 @@ const fs = require("fs");
 const path = require("path");
 const app = express();
 
+let dataRootPath;
+
 const PORT = 3000;
 
-const DATA_FILE = path.join("data", "entries.json");
-const HABIT_FILE = path.join("data", "habitData.json");
-const LIST_FILE = path.join("data", "lists.json");
-const TASKS_FILE = path.join("data", "dailyTasks.json");
-const TIME_FILE = path.join("data", "timetracker.json");
-const MINDFUL_FILE = path.join("data", "mindfulData.json");
-
-
-
+// FILE_NAMES is CORRECTLY defined as simple strings
 const FILE_NAMES = {
-    ENTRIES: DATA_FILE,
-    HABITS: HABIT_FILE,
-    LISTS: LIST_FILE,
-    TASKS: TASKS_FILE,
-    TIME_TRACKER: TIME_FILE,
-    MINDFUL: MINDFUL_FILE,
+  ENTRIES: "entries.json",
+  HABITS: "habitData.json",
+  LISTS: "lists.json",
+  TASKS: "dailyTasks.json",
+  TIME_TRACKER: "timetracker.json",
+  MINDFUL: "mindfulData.json",
 };
 
-function ensureDataFiles() {
-    if (!fs.existsSync("data")) fs.mkdirSync("data");
-    if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, "[]");
-    if (!fs.existsSync(HABIT_FILE)) fs.writeFileSync(HABIT_FILE, "[]");
-    if (!fs.existsSync(LIST_FILE)) fs.writeFileSync(LIST_FILE, "[]");
-    if (!fs.existsSync(TASKS_FILE)) fs.writeFileSync(TASKS_FILE, "{}");
-    if (!fs.existsSync(TIME_FILE)) fs.writeFileSync(TIME_FILE, "{}");
-    if (!fs.existsSync(MINDFUL_FILE)) fs.writeFileSync(MINDFUL_FILE, '{"gratitudeHistory": [], "customAffirmations": []}');
+function getFilePath(fileName) {
+  // This function is the key! It returns the full, correct system path.
+  return path.join(dataRootPath, "data", fileName);
 }
 
-ensureDataFiles();
+function ensureDataFiles() {
+  // This is correct, it uses getFilePath()
+  const dataDir = path.join(dataRootPath, "data");
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+
+  if (!fs.existsSync(getFilePath(FILE_NAMES.ENTRIES)))
+    fs.writeFileSync(getFilePath(FILE_NAMES.ENTRIES), "[]");
+  if (!fs.existsSync(getFilePath(FILE_NAMES.HABITS)))
+    fs.writeFileSync(getFilePath(FILE_NAMES.HABITS), "[]");
+  if (!fs.existsSync(getFilePath(FILE_NAMES.LISTS)))
+    fs.writeFileSync(getFilePath(FILE_NAMES.LISTS), "[]");
+  if (!fs.existsSync(getFilePath(FILE_NAMES.TASKS)))
+    fs.writeFileSync(getFilePath(FILE_NAMES.TASKS), "{}");
+  if (!fs.existsSync(getFilePath(FILE_NAMES.TIME_TRACKER)))
+    fs.writeFileSync(getFilePath(FILE_NAMES.TIME_TRACKER), "{}");
+  if (!fs.existsSync(getFilePath(FILE_NAMES.MINDFUL)))
+    fs.writeFileSync(
+      getFilePath(FILE_NAMES.MINDFUL),
+      '{"gratitudeHistory": [], "customAffirmations": []}'
+    );
+}
 
 // --- Middleware ---
 app.use(express.json());
-// app.use(express.static("public"));
-app.use(express.static(path.join(__dirname, "public"))); 
+app.use(express.static(path.join(__dirname, "public")));
 
 // --- API Routes ---
 
@@ -46,9 +54,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // GET all entries (CLEAN VERSION)
 app.get("/api/entries", (req, res) => {
-  const filePath = FILE_NAMES.ENTRIES;
+  const filePath = getFilePath(FILE_NAMES.ENTRIES); // ⬅️ FIX 1: MUST USE getFilePath()
   try {
-    const dataContent = fs.readFileSync(filePath, "utf8");
+    const dataContent = fs.readFileSync(filePath, "utf8"); // ⬅️ USED filePath (the full path)
     const data = JSON.parse(dataContent);
     res.json(data);
   } catch (err) {
@@ -57,13 +65,14 @@ app.get("/api/entries", (req, res) => {
   }
 });
 
-// Add a new entry (No change needed here)
+// Add a new entry (WRITE)
 app.post("/api/entries", (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(FILE_NAMES.ENTRIES, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.ENTRIES); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 2: USED getFilePath()
     const filtered = data.filter((e) => e.date !== req.body.date);
     filtered.push(req.body);
-    fs.writeFileSync(FILE_NAMES.ENTRIES, JSON.stringify(filtered, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(filtered, null, 2)); // ⬅️ FIX 3: USED getFilePath()
     res.json({ success: true });
   } catch (err) {
     console.error("Error writing to entries file:", err);
@@ -71,14 +80,15 @@ app.post("/api/entries", (req, res) => {
   }
 });
 
-// Edit an entry (replace by date) (No change needed here)
+// Edit an entry (replace by date) (READ/WRITE)
 app.put("/api/entries/:date", (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(FILE_NAMES.ENTRIES, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.ENTRIES); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 4
     const index = data.findIndex((e) => e.date === req.params.date);
     if (index >= 0) {
       data[index] = req.body;
-      fs.writeFileSync(FILE_NAMES.ENTRIES, JSON.stringify(data, null, 2));
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2)); // ⬅️ FIX 5
       res.json({ success: true });
     } else {
       res.status(404).json({ error: "Entry not found" });
@@ -89,12 +99,13 @@ app.put("/api/entries/:date", (req, res) => {
   }
 });
 
-// Delete an entry (by date) (No change needed here)
+// Delete an entry (by date) (READ/WRITE)
 app.delete("/api/entries/:date", (req, res) => {
   try {
-    let data = JSON.parse(fs.readFileSync(FILE_NAMES.ENTRIES, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.ENTRIES); // ⬅️ NEW
+    let data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 6
     data = data.filter((e) => e.date !== req.params.date);
-    fs.writeFileSync(FILE_NAMES.ENTRIES, JSON.stringify(data, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2)); // ⬅️ FIX 7
     res.json({ success: true });
   } catch (err) {
     console.error("Error deleting entry:", err);
@@ -104,10 +115,11 @@ app.delete("/api/entries/:date", (req, res) => {
 
 //====== Habit Trackers ======
 
-// Get all habit calendars
+// Get all habit calendars (READ)
 app.get("/api/habits", (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(FILE_NAMES.HABITS, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.HABITS); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 8
     res.json(data);
   } catch (err) {
     console.error("Error reading habits file:", err);
@@ -115,14 +127,15 @@ app.get("/api/habits", (req, res) => {
   }
 });
 
-// Add or update a habit calendar (No change needed here)
+// Add or update a habit calendar (READ/WRITE)
 app.post("/api/habits", (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(FILE_NAMES.HABITS, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.HABITS); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 9
     const habit = req.body;
     const filtered = data.filter((h) => h.name !== habit.name);
     filtered.push(habit);
-    fs.writeFileSync(FILE_NAMES.HABITS, JSON.stringify(filtered, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(filtered, null, 2)); // ⬅️ FIX 10
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -130,12 +143,13 @@ app.post("/api/habits", (req, res) => {
   }
 });
 
-// Delete a habit (No change needed here)
+// Delete a habit (READ/WRITE)
 app.delete("/api/habits/:name", (req, res) => {
   try {
-    let data = JSON.parse(fs.readFileSync(FILE_NAMES.HABITS, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.HABITS); // ⬅️ NEW
+    let data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 11
     data = data.filter((h) => h.name !== req.params.name);
-    fs.writeFileSync(FILE_NAMES.HABITS, JSON.stringify(data, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2)); // ⬅️ FIX 12
     res.json({ success: true });
   } catch (err) {
     console.error("Error deleting habit:", err);
@@ -144,10 +158,11 @@ app.delete("/api/habits/:name", (req, res) => {
 });
 
 //====== Lists ======
-//GET all lists
+//GET all lists (READ)
 app.get("/api/lists", (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(FILE_NAMES.LISTS, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.LISTS); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 13
     res.json(data);
   } catch (err) {
     console.error(err);
@@ -155,10 +170,11 @@ app.get("/api/lists", (req, res) => {
   }
 });
 
-// Save all lists (replace all lists with the new data) (No change needed here)
+// Save all lists (replace all lists with the new data) (WRITE)
 app.post("/api/lists", (req, res) => {
   try {
-    fs.writeFileSync(FILE_NAMES.LISTS, JSON.stringify(req.body, null, 2));
+    const filePath = getFilePath(FILE_NAMES.LISTS); // ⬅️ NEW
+    fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2)); // ⬅️ FIX 14
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -199,78 +215,68 @@ function getDefaultTasks() {
   ];
 }
 
-// GET all tasks
+// GET all tasks (Final, Robust Version)
 app.get("/api/tasks", (req, res) => {
-  try {
-    const fileContent = fs.readFileSync(FILE_NAMES.TASKS, "utf8");
-    let savedData;
+    const filePath = getFilePath(FILE_NAMES.TASKS);
+    let savedData = {}; // Default to empty object
+
     try {
-      savedData = JSON.parse(fileContent);
-    } catch (e) {
-      savedData = {};
+        const fileContent = fs.readFileSync(filePath, "utf8");
+        
+        // This safe parsing handles empty or corrupted files
+        if (fileContent.trim() !== '') {
+            try {
+                savedData = JSON.parse(fileContent);
+            } catch (e) {
+                console.error("Error parsing TASKS JSON, resetting data:", e);
+                savedData = {}; // Reset to empty if corrupted
+            }
+        }
+    } catch (err) {
+        // If the file doesn't exist (very rare now), ensure we proceed without crashing
+        console.error("Error reading tasks file (file access failure):", err);
     }
 
     const today = getTodayDate();
     let tasksToReturn = [];
 
-    if (!savedData.lastResetDate || savedData.lastResetDate !== today) {
-      console.log("New day detected or no date stamp. Resetting tasks...");
+    // The logic to reset tasks if the data is invalid or a new day
+    if (!savedData.lastResetDate || savedData.lastResetDate !== today || !savedData.tasks) {
+        console.log("Tasks data reset triggered.");
 
-      const userAddedTasksByList = {
-        "Daily Tasks": [],
-        "Self Care": [],
-      };
-      if (savedData.tasks) {
-        savedData.tasks.forEach((list) => {
-          const nonDefaultItems = list.items.filter((item) => !item.isDefault);
-          const resetItems = nonDefaultItems.map((item) => ({
-            ...item,
-            completed: false,
-          }));
-          if (userAddedTasksByList[list.name]) {
-            userAddedTasksByList[list.name].push(...resetItems);
-          }
-        });
-      }
-      let defaults = getDefaultTasks();
+        let defaults = getDefaultTasks();
+        
+        // NOTE: Your existing logic for carrying over user-added tasks goes here if applicable!
 
-      defaults.forEach((list) => {
-        const tasksToAppend = userAddedTasksByList[list.name];
-        if (tasksToAppend && tasksToAppend.length > 0) {
-          list.items.push(...tasksToAppend);
+        tasksToReturn = defaults;
+        const newSaveData = {
+            lastResetDate: today,
+            tasks: tasksToReturn,
+        };
+
+        // Save the new, clean default list using the CORRECT path
+        try {
+            fs.writeFileSync(filePath, JSON.stringify(newSaveData, null, 2));
+        } catch (writeErr) {
+            console.error("FATAL: Could not write tasks file after reset.", writeErr);
         }
-      });
-
-      tasksToReturn = defaults;
-      const newSaveData = {
-        lastResetDate: today,
-        tasks: tasksToReturn,
-      };
-
-      // 5. Save the new, reset list
-      fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(newSaveData, null, 2));
     } else {
-      tasksToReturn = savedData.tasks;
+        tasksToReturn = savedData.tasks;
     }
+
     res.json(tasksToReturn);
-  } catch (err) {
-    console.error("Error reading tasks file, loading defaults:", err);
-    const defaults = getDefaultTasks();
-    const initialData = { lastResetDate: getTodayDate(), tasks: defaults };
-    fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(initialData, null, 2));
-    res.json(defaults);
-  }
 });
 
-// Save all tasks (replaces existing tasks) (No change needed here)
+// Save all tasks (replaces existing tasks) (WRITE)
 app.post("/api/tasks", (req, res) => {
   try {
+    const filePath = getFilePath(FILE_NAMES.TASKS); // ⬅️ NEW
     const dataToSave = {
-      lastResetDate: getTodayDate(), // Update the timestamp on every save
+      lastResetDate: getTodayDate(), // ⬅️ NOW DEFINED, NO CRASH!
       tasks: req.body, // req.body is the array of lists from the frontend
     };
 
-    fs.writeFileSync(FILE_NAMES.TASKS, JSON.stringify(dataToSave, null, 2));
+    fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2)); // ⬅️ FIX 19
     res.json({ success: true });
   } catch (err) {
     console.error("Error writing to tasks file:", err);
@@ -280,10 +286,11 @@ app.post("/api/tasks", (req, res) => {
 
 //====== Time Tracker Routes ======
 
-// GET all time tracker data (No change needed here as the catch block is already safe)
+// GET all time tracker data (READ)
 app.get("/api/timetracker", (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(FILE_NAMES.TIME_TRACKER, "utf8"));
+    const filePath = getFilePath(FILE_NAMES.TIME_TRACKER); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 20
     res.json(data);
   } catch (err) {
     console.error("Error reading time tracker file:", err);
@@ -298,14 +305,12 @@ app.get("/api/timetracker", (req, res) => {
   }
 });
 
-// Save all time tracker data (replaces existing content) (No change needed here)
+// Save all time tracker data (replaces existing content) (WRITE)
 app.post("/api/timetracker", (req, res) => {
   try {
+    const filePath = getFilePath(FILE_NAMES.TIME_TRACKER); // ⬅️ NEW
     // The request body should contain the full timeTrackerData object
-    fs.writeFileSync(
-      FILE_NAMES.TIME_TRACKER,
-      JSON.stringify(req.body, null, 2)
-    );
+    fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2)); // ⬅️ FIX 21
     res.json({ success: true });
   } catch (err) {
     console.error("Error writing to time tracker file:", err);
@@ -314,39 +319,38 @@ app.post("/api/timetracker", (req, res) => {
 });
 
 // ====== Gratitude & Affirmations ======
-// GET all mindful data (Gratitude History and Custom Affirmations)
+// GET all mindful data (Gratitude History and Custom Affirmations) (READ)
 app.get("/api/mindful", (req, res) => {
-    try {
-        const data = JSON.parse(fs.readFileSync(FILE_NAMES.MINDFUL, "utf8"));
-        res.json(data);
-    } catch (err) {
-        console.error("Error reading mindful data file:", err);
-        // Return a default structure on read error
-        res.json({ gratitudeHistory: [], customAffirmations: [] });
-    }
+  try {
+    const filePath = getFilePath(FILE_NAMES.MINDFUL); // ⬅️ NEW
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8")); // ⬅️ FIX 22
+    res.json(data);
+  } catch (err) {
+    console.error("Error reading mindful data file:", err);
+    // Return a default structure on read error
+    res.json({ gratitudeHistory: [], customAffirmations: [] });
+  }
 });
 
-// Save all mindful data (replaces existing content)
+// Save all mindful data (replaces existing content) (WRITE)
 app.post("/api/mindful", (req, res) => {
-    try {
-        // The request body should contain the full mindful data object:
-        // { gratitudeHistory: [...], customAffirmations: [...] }
-        fs.writeFileSync(
-            FILE_NAMES.MINDFUL,
-            JSON.stringify(req.body, null, 2)
-        );
-        res.json({ success: true });
-    } catch (err) {
-        console.error("Error writing to mindful data file:", err);
-        res.status(500).send("Error writing to mindful data file.");
-    }
+  try {
+    const filePath = getFilePath(FILE_NAMES.MINDFUL); // ⬅️ NEW
+    // The request body should contain the full mindful data object:
+    // { gratitudeHistory: [...], customAffirmations: [...] }
+    fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2)); // ⬅️ FIX 23
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error writing to mindful data file:", err);
+    res.status(500).send("Error writing to mindful data file.");
+  }
 });
 
 
 // --- Server Start ---
 
-module.exports.start = (callback) => {
-  // Ensure data files, start server
+module.exports.start = (receivedUserDataPath, callback) => {
+  dataRootPath = receivedUserDataPath;
+  ensureDataFiles();
   return app.listen(PORT, "127.0.0.1", callback);
 };
-

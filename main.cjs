@@ -2,6 +2,10 @@ const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const server = require("./server.cjs");
 
+const userDataPath = app.getPath('userData'); 
+console.log(`User Data Path defined as: ${userDataPath}`);
+
+
 let mainWindow;
 
 function createWindow() {
@@ -10,14 +14,14 @@ function createWindow() {
     height: 800,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
 
-      preload: path.join(__dirname, "preload.js"),
+   
     },
   });
 
   // Start your server first
-  server.start(() => {
+  server.start(userDataPath, () => {
     console.log("Server running at http://localhost:3000");
     mainWindow.loadURL("http://localhost:3000");
   });
