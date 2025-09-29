@@ -305,7 +305,7 @@ function renderNewList(
 ) {
     const col = document.createElement("div");
     // Updated classes for better responsive layout on an Electron window
-    col.className = "px-3 py-3 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4"; 
+    col.className = "p-4 w-full";
     col.dataset.custom = "true";
     col.dataset.type = listType;
 

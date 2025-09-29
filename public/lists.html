@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -73,7 +73,7 @@
         <span class="text-2xl mb-1">⏱️</span>
         <span class="hidden md:block text-white">Time</span>
       </a>
-        <a
+      <a
         href="gratAff.html"
         class="flex flex-col items-center justify-center text-xs text-white/80 hover:bg-purple-700/50"
       >
@@ -118,66 +118,66 @@
         <h3 class="text-2xl font-bold mb-4 text-center">
           Create a New List 📝
         </h3>
-        <div 
-    id="addListContent" 
-    class="relative transform transition-all ..." 
-    tabindex="-1"  
-    aria-modal="true" 
-    role="dialog"
->
-        <form id="newListForm" class="space-y-4">
-          <div>
-            <label for="listName" class="block text-sm font-medium"
-              >List Name</label
-            >
-            <input
-              type="text"
-              id="listName"
-              class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="e.g., Groceries, Project Tasks"
-              required
-            />
-          </div>
-          <div>
-            <label for="listType" class="block text-sm font-medium"
-              >List Type</label
-            >
-            <select
-              id="listType"
-              class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              required
-            >
-              <option value="checklist">Checklist</option>
-              <option value="notes">Note</option>
-            </select>
-          </div>
-          <div>
-            <label for="firstItem" class="block text-sm font-medium"
-              >First Item</label
-            >
-            <input
-              type="text"
-              id="firstItem"
-              class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="e.g., Buy milk"
-            />
-          </div>
-          <div class="flex justify-end space-x-4 mt-6">
-            <button
-              type="button"
-              id="cancelBtn"
-              class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
-            >
-              Create List
-            </button>
-          </div>
-        </form>
+        <div
+          id="addListContent"
+          class="relative transform transition-all ..."
+          tabindex="-1"
+          aria-modal="true"
+          role="dialog"
+        >
+          <form id="newListForm" class="space-y-4">
+            <div>
+              <label for="listName" class="block text-sm font-medium"
+                >List Name</label
+              >
+              <input
+                type="text"
+                id="listName"
+                class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., Groceries, Project Tasks"
+                required
+              />
+            </div>
+            <div>
+              <label for="listType" class="block text-sm font-medium"
+                >List Type</label
+              >
+              <select
+                id="listType"
+                class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
+                <option value="checklist">Checklist</option>
+                <option value="notes">Note</option>
+              </select>
+            </div>
+            <div>
+              <label for="firstItem" class="block text-sm font-medium"
+                >First Item</label
+              >
+              <input
+                type="text"
+                id="firstItem"
+                class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., Buy milk"
+              />
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+              <button
+                type="button"
+                id="cancelBtn"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
+              >
+                Create List
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -214,117 +214,133 @@
       </div>
     </div>
 
-        <!-- 3. Add Item Modal (NEW) - Replaces prompt() for adding items -->
-    <div id="addItemModal" class="modal-overlay hidden fixed inset-0 items-center justify-center opacity-0 transition-opacity">
-        <div id="addItemContent" class="modal-content-card w-11/12 md:max-w-sm p-6 rounded-xl shadow-2xl scale-95 opacity-0">
-            <h3 class="text-xl font-bold mb-4 text-white">Add Checklist Item</h3>
-            <div class="mb-4">
-                <label for="newItemInput" class="block text-sm font-medium text-gray-400 mb-1">Item Description</label>
-                <input type="text" id="newItemInput" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500" placeholder="What task do you need to add?">
-            </div>
-            <div class="flex justify-end space-x-3">
-                <button type="button" id="cancelAddItem" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition">Cancel</button>
-                <button type="button" id="saveAddItem" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">Add Item</button>
-            </div>
+    <!-- 3. Add Item Modal (NEW) - Replaces prompt() for adding items -->
+    <div
+      id="addItemModal"
+      class="modal-overlay hidden fixed inset-0 items-center justify-center opacity-0 transition-opacity"
+    >
+      <div
+        id="addItemContent"
+        class="modal-content-card w-11/12 md:max-w-sm p-6 rounded-xl shadow-2xl scale-95 opacity-0"
+      >
+        <h3 class="text-xl font-bold mb-4 text-white">Add Checklist Item</h3>
+        <div class="mb-4">
+          <label
+            for="newItemInput"
+            class="block text-sm font-medium text-gray-400 mb-1"
+            >Item Description</label
+          >
+          <input
+            type="text"
+            id="newItemInput"
+            required
+            class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
+            placeholder="What task do you need to add?"
+          />
         </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            id="cancelAddItem"
+            class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            id="saveAddItem"
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Add Item
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- 4. Rename List Modal (NEW) - Replaces prompt() for renaming lists -->
-    <div id="renameListModal" class="modal-overlay hidden fixed inset-0 items-center justify-center opacity-0 transition-opacity">
-        <div id="renameListContent" class="modal-content-card w-11/12 md:max-w-sm p-6 rounded-xl shadow-2xl scale-95 opacity-0">
-            <h3 class="text-xl font-bold mb-4 text-white">Rename List</h3>
-            <div class="mb-4">
-                <label for="renameInput" class="block text-sm font-medium text-gray-400 mb-1">New List Name</label>
-                <input type="text" id="renameInput" required class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500" placeholder="Enter new name">
-            </div>
-            <div class="flex justify-end space-x-3">
-                <button type="button" id="cancelRename" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition">Cancel</button>
-                <button type="button" id="saveRename" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">Rename</button>
-            </div>
+    <div
+      id="renameListModal"
+      class="modal-overlay hidden fixed inset-0 items-center justify-center opacity-0 transition-opacity"
+    >
+      <div
+        id="renameListContent"
+        class="modal-content-card w-11/12 md:max-w-sm p-6 rounded-xl shadow-2xl scale-95 opacity-0"
+      >
+        <h3 class="text-xl font-bold mb-4 text-white">Rename List</h3>
+        <div class="mb-4">
+          <label
+            for="renameInput"
+            class="block text-sm font-medium text-gray-400 mb-1"
+            >New List Name</label
+          >
+          <input
+            type="text"
+            id="renameInput"
+            required
+            class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter new name"
+          />
         </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            id="cancelRename"
+            class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            id="saveRename"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+          >
+            Rename
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div
-        id="addItemModal"
-        class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300"
-    >
-        <div
-            id="addItemContent"
-            class="bg-white/10 backdrop-blur-lg rounded-xl p-8 max-w-sm w-11/12 text-white shadow-xl transform transition-transform duration-300 scale-95 opacity-0"
-        >
-            <h3 class="text-2xl font-bold mb-4 text-center">
-                Add Checklist Item ➕
-            </h3>
-            <div class="mb-4">
-                <label for="newItemInput" class="block text-sm font-medium"
-                    >Item Description</label
-                >
-                <input
-                    type="text"
-                    id="newItemInput"
-                    required
-                    class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="What task do you need to add?"
-                />
-            </div>
-            <div class="flex justify-end space-x-4 mt-6">
-                <button
-                    type="button"
-                    id="cancelAddItem"
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="button"
-                    id="saveAddItem"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
-                >
-                    Add Item
-                </button>
-            </div>
-        </div>
-    </div>
+   
 
     <!-- 4. Rename List Modal (NEW - Styled to match) -->
     <div
-        id="renameListModal"
-        class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300"
+      id="renameListModal"
+      class="hidden fixed inset-0 z-50 overflow-auto bg-black/40 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300"
     >
-        <div
-            id="renameListContent"
-            class="bg-white/10 backdrop-blur-lg rounded-xl p-8 max-w-sm w-11/12 text-white shadow-xl transform transition-transform duration-300 scale-95 opacity-0"
-        >
-            <h3 class="text-2xl font-bold mb-4 text-center">Rename List ✍️</h3>
-            <div class="mb-4">
-                <label for="renameInput" class="block text-sm font-medium"
-                    >New List Name</label
-                >
-                <input
-                    type="text"
-                    id="renameInput"
-                    required
-                    class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter new name"
-                />
-            </div>
-            <div class="flex justify-end space-x-4 mt-6">
-                <button
-                    type="button"
-                    id="cancelRename"
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="button"
-                    id="saveRename"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
-                >
-                    Rename
-                </button>
-            </div>
+      <div
+        id="renameListContent"
+        class="bg-white/10 backdrop-blur-lg rounded-xl p-8 max-w-sm w-11/12 text-white shadow-xl transform transition-transform duration-300 scale-95 opacity-0"
+      >
+        <h3 class="text-2xl font-bold mb-4 text-center">Rename List ✍️</h3>
+        <div class="mb-4">
+          <label for="renameInput" class="block text-sm font-medium"
+            >New List Name</label
+          >
+          <input
+            type="text"
+            id="renameInput"
+            required
+            class="mt-1 block w-full px-3 py-2 bg-white/20 border border-white/30 rounded-md text-white placeholder-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter new name"
+          />
         </div>
+        <div class="flex justify-end space-x-4 mt-6">
+          <button
+            type="button"
+            id="cancelRename"
+            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            id="saveRename"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-transform transform hover:scale-105"
+          >
+            Rename
+          </button>
+        </div>
+      </div>
     </div>
 
     <script src="lists.js"></script>
