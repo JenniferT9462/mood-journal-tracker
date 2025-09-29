@@ -376,7 +376,14 @@ document.addEventListener("DOMContentLoaded", () => {
     summaryByType: document.getElementById("summaryByType"),
     entriesList: document.getElementById("entriesList"),
     archiveContainer: document.getElementById("archiveContainer"),
+    menuBtn: document.getElementById("menu-btn"),
+    sidebar: document.querySelector(".sidebar"),
   };
+  if (elements.menuBtn && elements.sidebar) {
+        elements.menuBtn.addEventListener("click", () => {
+            elements.sidebar.classList.toggle("-translate-x-full");
+        });
+    }
 
   (async () => {
     await loadData();
