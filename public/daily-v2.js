@@ -216,8 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
     } else {
-      // If the backend returned null or an empty array (which shouldn't happen now),
-      // there's a problem, but we don't load defaults here.
+      
       console.warn("No task data received from server. Check server logs.");
     }
 

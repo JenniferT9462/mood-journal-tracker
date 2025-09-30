@@ -132,7 +132,7 @@ async function renderDashboard() {
     await renderJournalSnapshot();
     await renderHabitSnapshot();
     await renderNotesSnapshot();
-    // await renderTasksSnapshot();
+   
 }
 document.addEventListener("DOMContentLoaded", () => {
     renderDashboard();
